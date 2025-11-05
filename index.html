@@ -3,130 +3,97 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>دردشة خاصة</title>
+  <title>دردشة خاصة — نمط واتساب</title>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK (compat for simple HTML) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    body {
-      font-family: "Tahoma", sans-serif;
-      background: #e5ddd5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      direction: rtl;
+    :root{
+      --wh-green:#075E54;
+      --bubble-me:#dcf8c6;
+      --bubble-them:#ffffff;
+      --bg:#e5ddd5;
     }
-    header {
-      background: #075E54;
-      color: white;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      font-family:Tahoma, Arial, sans-serif;
+      direction:rtl;
+      background:var(--bg);
     }
-    #login {
-      margin: auto;
-      text-align: center;
+    header{
+      background:var(--wh-green);
+      color:#fff;
+      padding:12px 16px;
+      text-align:center;
+      font-size:18px;
     }
-    #login input {
-      padding: 8px;
-      font-size: 16px;
-      width: 180px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    #container{flex:1; display:flex; flex-direction:column;}
+    #login{
+      padding:18px;
+      text-align:center;
     }
-    #login button {
-      background: #25D366;
-      border: none;
-      color: white;
-      padding: 8px 14px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
+    #login input{padding:8px; font-size:14px; margin:6px; border-radius:6px; border:1px solid #ccc}
+    #login button{
+      background:#25D366; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-size:14px;
     }
-    #chat {
-      display: none;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+    #chat{display:none; flex:1; border-top:1px solid rgba(0,0,0,0.06); display:flex; flex-direction:column;}
+    #messages{
+      flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px;
+      background: linear-gradient(#ece5dd, #e5ddd5);
     }
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      background: #ece5dd;
+    .bubble{
+      max-width:72%;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+      word-break:break-word;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+      display:inline-block;
     }
-    .msg {
-      max-width: 70%;
-      padding: 8px 12px;
-      margin: 6px 0;
-      border-radius: 10px;
-      clear: both;
-      font-size: 14px;
-      word-wrap: break-word;
+    .theirs{align-self:flex-start; background:var(--bubble-them); border-bottom-left-radius:0;}
+    .mine{align-self:flex-end; background:var(--bubble-me); border-bottom-right-radius:0;}
+    .meta{font-size:11px; color:#666; margin-top:4px; opacity:0.9;}
+    #inputBar{
+      display:flex; gap:8px; padding:10px; align-items:center; background:#f0f0f0; border-top:1px solid #ddd;
     }
-    .mine {
-      background: #dcf8c6;
-      align-self: flex-end;
-      border-bottom-right-radius: 0;
-    }
-    .theirs {
-      background: white;
-      align-self: flex-start;
-      border-bottom-left-radius: 0;
-    }
-    #inputBar {
-      display: flex;
-      padding: 8px;
-      background: #f0f0f0;
-      border-top: 1px solid #ccc;
-    }
-    #inputBar input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 25px;
-      border: 1px solid #ccc;
-      outline: none;
-      font-size: 14px;
-    }
-    #inputBar button {
-      background: #25D366;
-      border: none;
-      color: white;
-      padding: 10px 16px;
-      margin-right: 8px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-    }
+    #text{flex:1; padding:10px 12px; border-radius:20px; border:1px solid #ccc; font-size:14px; outline:none}
+    #send{background:var(--wh-green); color:white; border:none; padding:10px 14px; border-radius:50%; font-size:16px; cursor:pointer}
+    .small{font-size:12px;color:#444; margin-bottom:8px}
+    /* scrollbar small */
+    #messages::-webkit-scrollbar{width:8px}
+    #messages::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:8px}
   </style>
 </head>
 <body>
+  <header>دردشة خاصة — نسق واتساب</header>
 
-  <header>💬 دردشة مشفّرة</header>
+  <div id="container">
+    <div id="login">
+      <div class="small">ادخل رمز الغرفة واسمك. الرسائل التي سترسلها لن تظهر لك محليًا.</div>
+      <input id="room" placeholder="رمز الغرفة (مثلاً ROOM1)">
+      <input id="user" placeholder="اسمك (مثلاً خالد)">
+      <br>
+      <button id="join">انضم للغرفة</button>
+    </div>
 
-  <div id="login">
-    <p>ادخل رمز الغرفة للانضمام:</p>
-    <input id="room" placeholder="مثلاً ABC123">
-    <br><br>
-    <input id="user" placeholder="اسمك" style="width:180px;">
-    <br><br>
-    <button id="join">دخول</button>
-  </div>
+    <div id="chat">
+      <div id="messages"></div>
 
-  <div id="chat">
-    <div id="messages"></div>
-    <div id="inputBar">
-      <input id="text" placeholder="اكتب رسالة..." autocomplete="off">
-      <button id="send">➤</button>
+      <div id="inputBar">
+        <input id="text" placeholder="اكتب رسالة واضغط Enter أو زر الإرسال">
+        <button id="send">➤</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // إعدادات Firebase الخاصة بك
+    // ----- Firebase config (الصق إعداداتك هنا) -----
     const firebaseConfig = {
       apiKey: "AIzaSyDfOgEN5JrSVBhtQn0uNPaNA6mGy9ElNl0",
       authDomain: "privatechatapp-64cdc.firebaseapp.com",
@@ -137,54 +104,107 @@
       appId: "1:1043290226215:web:78b49072dd70e748eb1802",
       measurementId: "G-G0Q28H45ZX"
     };
+    // ----------------------------------------------
 
+    // init
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // عناصر DOM
+    // DOM
     const loginDiv = document.getElementById('login');
     const chatDiv = document.getElementById('chat');
+    const messagesDiv = document.getElementById('messages');
     const roomInput = document.getElementById('room');
     const userInput = document.getElementById('user');
     const joinBtn = document.getElementById('join');
-    const messagesDiv = document.getElementById('messages');
     const textInput = document.getElementById('text');
     const sendBtn = document.getElementById('send');
 
-    let roomRef = null;
-    let username = "مجهول";
+    // create or reuse a client id so we can identify this client
+    let myClientId = localStorage.getItem('chat_client_id');
+    if(!myClientId){
+      myClientId = Math.random().toString(36).slice(2,10);
+      localStorage.setItem('chat_client_id', myClientId);
+    }
 
+    let roomRef = null;
+    let username = 'مجهول';
+
+    // helper: format time HH:MM
+    function fmtTime(ts){
+      try{
+        const d = new Date(ts);
+        const hh = String(d.getHours()).padStart(2,'0');
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        return hh + ':' + mm;
+      }catch(e){ return '';}
+    }
+
+    // display a message (for others only; sender's own messages are not shown locally)
+    function showMessage(msg){
+      const el = document.createElement('div');
+      const whoIsMe = msg.senderId === myClientId;
+      // We intentionally do NOT show messages sent by this client (per requirement).
+      if(whoIsMe) return;
+      el.className = 'bubble theirs';
+      const content = document.createElement('div');
+      content.textContent = msg.user + ': ' + msg.text;
+      el.appendChild(content);
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.textContent = fmtTime(msg.ts || Date.now());
+      el.appendChild(meta);
+      messagesDiv.appendChild(el);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // join room
     joinBtn.onclick = () => {
       const room = roomInput.value.trim();
-      username = userInput.value.trim() || "مجهول";
-      if (!room) return alert("أدخل رمز الغرفة");
-      roomRef = db.ref("rooms/" + room + "/messages");
-      loginDiv.style.display = "none";
-      chatDiv.style.display = "flex";
-      messagesDiv.innerHTML = "";
-
-      // الاستماع للرسائل الجديدة
-      roomRef.limitToLast(100).on("child_added", snap => {
+      username = (userInput.value.trim() || 'مجهول');
+      if(!room) return alert('أدخل رمز الغرفة أولاً');
+      // set reference
+      roomRef = db.ref('rooms/' + room + '/messages');
+      // UI
+      loginDiv.style.display = 'none';
+      chatDiv.style.display = 'flex';
+      messagesDiv.innerHTML = '';
+      // listen for new messages
+      roomRef.limitToLast(200).on('child_added', snap => {
         const m = snap.val();
-        const msgEl = document.createElement("div");
-        msgEl.className = "msg " + (m.user === username ? "mine" : "theirs");
-        msgEl.textContent = m.user + ": " + m.text;
-        messagesDiv.appendChild(msgEl);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        // m has: text, user, ts, senderId
+        showMessage(m);
       });
     };
 
-    sendBtn.onclick = () => {
-      const text = textInput.value.trim();
-      if (!text || !roomRef) return;
-      roomRef.push({ text: text, user: username, ts: Date.now() });
-      textInput.value = "";
-    };
+    // send message
+    function sendMessage(){
+      const txt = textInput.value.trim();
+      if(!txt || !roomRef) return;
+      const payload = {
+        text: txt,
+        user: username,
+        ts: Date.now(),
+        senderId: myClientId
+      };
+      // push to firebase
+      roomRef.push(payload).then(()=>{
+        // do not display it locally (deliberate)
+        textInput.value = '';
+        // optional: you can flash a tiny confirmation; we skip to meet requirement
+      }).catch(err=>{
+        console.error('send error',err);
+        alert('فشل إرسال الرسالة');
+      });
+    }
 
-    textInput.addEventListener("keypress", e => {
-      if (e.key === "Enter") sendBtn.click();
+    sendBtn.onclick = sendMessage;
+    textInput.addEventListener('keypress', e => {
+      if(e.key === 'Enter') sendMessage();
     });
-  </script>
 
+    // quick note: if you want to see also your own sent messages for debugging,
+    // open the Firebase Realtime Database console and inspect /rooms/{room}/messages
+  </script>
 </body>
 </html>
