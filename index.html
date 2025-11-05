@@ -3,198 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة تقطيع الفواكه</title>
+    <title>التقاط صورة وإرسالها بالبريد</title>
     <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cbc;
+            --accent-color: #ff6b6b;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             padding: 20px;
         }
-
+        
         .container {
-            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
             text-align: center;
         }
-
-        header {
-            margin-bottom: 20px;
-        }
-
+        
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
-
-        .info-item {
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step-title {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            margin-bottom: 15px;
+            color: var(--primary-color);
         }
-
-        .info-label {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 1.5rem;
+        
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
             font-weight: bold;
         }
-
-        .game-area {
+        
+        #camera-container {
             position: relative;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background-color: #000;
         }
-
-        .fruit {
-            position: absolute;
-            cursor: pointer;
-            transition: transform 0.2s;
-            user-select: none;
+        
+        #video, #canvas, #preview {
+            width: 100%;
+            display: block;
         }
-
-        .fruit:hover {
-            transform: scale(1.1);
+        
+        #preview {
+            display: none;
         }
-
+        
         .controls {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
-
+        
         button {
-            padding: 12px 25px;
-            font-size: 1rem;
-            background: #FF5722;
+            background-color: var(--primary-color);
             color: white;
             border: none;
+            padding: 12px 25px;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        button:hover {
-            background: #E64A19;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        .level-screen, .game-over-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            z-index: 10;
-            border-radius: 15px;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
-        .level-screen h2, .game-over-screen h2 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #FFD700;
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
-
-        .level-screen p, .game-over-screen p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
+        
+        button:active {
+            transform: translateY(0);
         }
-
-        .hidden {
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #capture-btn {
+            background-color: var(--accent-color);
+        }
+        
+        #capture-btn:hover {
+            background-color: #ff5252;
+        }
+        
+        #email-form {
             display: none;
         }
-
-        .rating {
-            display: flex;
-            justify-content: center;
-            margin: 15px 0;
+        
+        .form-group {
+            margin-bottom: 20px;
         }
-
-        .star {
-            font-size: 2rem;
-            color: #ddd;
-            margin: 0 5px;
-            transition: color 0.3s;
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
         }
-
-        .star.filled {
-            color: #FFD700;
+        
+        input[type="email"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s ease;
         }
-
-        .instructions {
-            background: rgba(255, 255, 255, 0.15);
+        
+        input[type="email"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        #status {
+            margin-top: 20px;
             padding: 15px;
             border-radius: 10px;
-            margin-top: 20px;
-            text-align: right;
+            text-align: center;
+            font-weight: 500;
+            display: none;
         }
-
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #FFD700;
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
         }
-
-        .instructions ul {
-            list-style-type: none;
-            padding-right: 20px;
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
         }
-
-        .instructions li {
-            margin-bottom: 8px;
-            line-height: 1.5;
+        
+        .loading {
+            background-color: #cce5ff;
+            color: #004085;
+            display: block;
         }
-
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
         @media (max-width: 600px) {
-            .game-area {
-                height: 400px;
-            }
-            
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
-            .info-value {
-                font-size: 1.2rem;
+            .content {
+                padding: 20px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -202,324 +236,242 @@
 <body>
     <div class="container">
         <header>
-            <h1>لعبة تقطيع الفواكه</h1>
+            <h1>التقاط صورة وإرسالها بالبريد</h1>
+            <p class="subtitle">التقط صورتك وأرسلها إلى بريدك الإلكتروني بسهولة</p>
         </header>
         
-        <div class="game-info">
-            <div class="info-item">
-                <div class="info-label">النقاط</div>
-                <div class="info-value" id="score">0</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">المستوى</div>
-                <div class="info-value" id="level">1</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">الوقت</div>
-                <div class="info-value" id="timer">60</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">الفواكه المقطوعة</div>
-                <div class="info-value" id="fruits-cut">0</div>
-            </div>
-        </div>
-        
-        <div class="game-area" id="game-area">
-            <div class="level-screen" id="level-screen">
-                <h2>المستوى <span id="level-number">1</span></h2>
-                <p>استعد!</p>
-                <button id="start-level">ابدأ اللعب</button>
+        <div class="content">
+            <div class="step">
+                <div class="step-title">
+                    <span class="step-number">1</span>
+                    <h2>تشغيل الكاميرا</h2>
+                </div>
+                <p>انقر على زر "تشغيل الكاميرا" للسماح للموقع بالوصول إلى كاميرا الجهاز.</p>
+                <div class="controls">
+                    <button id="start-camera">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5z"/>
+                        </svg>
+                        تشغيل الكاميرا
+                    </button>
+                </div>
             </div>
             
-            <div class="game-over-screen hidden" id="game-over-screen">
-                <h2>انتهت اللعبة!</h2>
-                <p>نقاطك النهائية: <span id="final-score">0</span></p>
-                <div class="rating" id="rating">
-                    <span class="star"></span>
-                    <span class="star"></span>
-                    <span class="star"></span>
-                    <span class="star"></span>
-                    <span class="star"></span>
+            <div class="step">
+                <div class="step-title">
+                    <span class="step-number">2</span>
+                    <h2>التقاط الصورة</h2>
                 </div>
-                <button id="restart">العب مرة أخرى</button>
+                <p>اضغط على زر "التقاط صورة" عندما تكون مستعدًا.</p>
+                <div id="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                    <img id="preview" alt="الصورة الملتقطة">
+                </div>
+                <div class="controls">
+                    <button id="capture-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                            <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
+                        </svg>
+                        التقاط صورة
+                    </button>
+                    <button id="retake-btn" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                        إعادة التقاط
+                    </button>
+                </div>
             </div>
+            
+            <div class="step" id="email-form">
+                <div class="step-title">
+                    <span class="step-number">3</span>
+                    <h2>إرسال الصورة</h2>
+                </div>
+                <p>أدخل بريدك الإلكتروني لإرسال الصورة الملتقطة.</p>
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني:</label>
+                    <input type="email" id="email" placeholder="example@domain.com" required>
+                </div>
+                <div class="controls">
+                    <button id="send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+                        </svg>
+                        إرسال الصورة
+                    </button>
+                </div>
+            </div>
+            
+            <div id="status"></div>
         </div>
         
-        <div class="controls">
-            <button id="pause">إيقاف مؤقت</button>
-            <button id="restart-game">إعادة تشغيل</button>
-        </div>
-        
-        <div class="instructions">
-            <h3>كيفية اللعب:</h3>
-            <ul>
-                <li>انقر على الفواكه لتقطيعها وجمع النقاط</li>
-                <li>كل نوع من الفواكه يعطيك نقاط مختلفة</li>
-                <li>لديك 60 ثانية في كل مستوى</li>
-                <li>تقدم للمستوى التالي عند تحقيق الهدف</li>
-                <li>احصل على 5 نجوم لتحقيق أفضل نتيجة!</li>
-            </ul>
-        </div>
+        <footer>
+            <p>© 2023 جميع الحقوق محفوظة - تم التطوير باستخدام Google Apps Script</p>
+        </footer>
     </div>
 
     <script>
-        // عناصر DOM
-        const gameArea = document.getElementById('game-area');
-        const scoreElement = document.getElementById('score');
-        const levelElement = document.getElementById('level');
-        const timerElement = document.getElementById('timer');
-        const fruitsCutElement = document.getElementById('fruits-cut');
-        const levelScreen = document.getElementById('level-screen');
-        const levelNumber = document.getElementById('level-number');
-        const startLevelButton = document.getElementById('start-level');
-        const gameOverScreen = document.getElementById('game-over-screen');
-        const finalScoreElement = document.getElementById('final-score');
-        const ratingElement = document.getElementById('rating');
-        const restartButton = document.getElementById('restart');
-        const pauseButton = document.getElementById('pause');
-        const restartGameButton = document.getElementById('restart-game');
-
-        // متغيرات اللعبة
-        let score = 0;
-        let level = 1;
-        let timeLeft = 60;
-        let fruitsCut = 0;
-        let gameActive = false;
-        let timerInterval;
-        let fruitInterval;
-        let isPaused = false;
-
-        // أنواع الفواكه وقيمها
-        const fruits = [
-            { name: 'تفاح', points: 10, color: '#FF5252', emoji: '🍎' },
-            { name: 'موز', points: 15, color: '#FFD740', emoji: '🍌' },
-            { name: 'برتقال', points: 12, color: '#FF9800', emoji: '🍊' },
-            { name: 'فراولة', points: 20, color: '#E91E63', emoji: '🍓' },
-            { name: 'عنب', points: 8, color: '#9C27B0', emoji: '🍇' },
-            { name: 'أناناس', points: 25, color: '#FFC107', emoji: '🍍' },
-            { name: 'بطيخ', points: 30, color: '#4CAF50', emoji: '🍉' }
-        ];
-
-        // أهداف المستويات
-        const levelGoals = [100, 250, 450, 700, 1000];
-
-        // تهيئة اللعبة
-        function initGame() {
-            score = 0;
-            level = 1;
-            timeLeft = 60;
-            fruitsCut = 0;
-            gameActive = false;
-            isPaused = false;
-            
-            updateUI();
-            showLevelScreen();
-        }
-
-        // عرض شاشة المستوى
-        function showLevelScreen() {
-            levelNumber.textContent = level;
-            levelScreen.classList.remove('hidden');
-            gameOverScreen.classList.add('hidden');
-        }
-
-        // بدء المستوى
-        function startLevel() {
-            levelScreen.classList.add('hidden');
-            gameActive = true;
-            isPaused = false;
-            pauseButton.textContent = 'إيقاف مؤقت';
-            
-            // بدء المؤقت
-            startTimer();
-            
-            // بدء ظهور الفواكه
-            startFruitSpawning();
-        }
-
-        // بدء المؤقت
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeLeft = 60;
-            updateTimer();
-            
-            timerInterval = setInterval(() => {
-                if (!isPaused) {
-                    timeLeft--;
-                    updateTimer();
-                    
-                    if (timeLeft <= 0) {
-                        endLevel();
-                    }
-                }
-            }, 1000);
-        }
-
-        // تحديث المؤقت
-        function updateTimer() {
-            timerElement.textContent = timeLeft;
-        }
-
-        // بدء ظهور الفواكه
-        function startFruitSpawning() {
-            clearInterval(fruitInterval);
-            
-            // معدل ظهور الفواكه يزداد مع تقدم المستويات
-            const spawnRate = Math.max(500, 1000 - (level * 100));
-            
-            fruitInterval = setInterval(() => {
-                if (!isPaused && gameActive) {
-                    spawnFruit();
-                }
-            }, spawnRate);
-        }
-
-        // إنشاء فاكهة عشوائية
-        function spawnFruit() {
-            const fruit = fruits[Math.floor(Math.random() * fruits.length)];
-            const fruitElement = document.createElement('div');
-            fruitElement.className = 'fruit';
-            fruitElement.textContent = fruit.emoji;
-            fruitElement.style.fontSize = `${40 + Math.random() * 20}px`;
-            fruitElement.style.left = `${Math.random() * (gameArea.offsetWidth - 60)}px`;
-            fruitElement.style.top = `${gameArea.offsetHeight}px`;
-            fruitElement.dataset.points = fruit.points;
-            
-            // إضافة تأثير اختفاء الفاكهة بعد فترة
-            setTimeout(() => {
-                if (fruitElement.parentNode) {
-                    fruitElement.remove();
-                }
-            }, 3000);
-            
-            // إضافة حدث النقر
-            fruitElement.addEventListener('click', cutFruit);
-            
-            gameArea.appendChild(fruitElement);
-            
-            // تحريك الفاكهة للأعلى
-            let position = gameArea.offsetHeight;
-            const moveInterval = setInterval(() => {
-                if (!isPaused && fruitElement.parentNode) {
-                    position -= 2 + level; // تزداد السرعة مع المستوى
-                    fruitElement.style.top = `${position}px`;
-                    
-                    // إزالة الفاكهة إذا خرجت من الشاشة
-                    if (position < -60) {
-                        clearInterval(moveInterval);
-                        fruitElement.remove();
-                    }
-                } else if (!fruitElement.parentNode) {
-                    clearInterval(moveInterval);
-                }
-            }, 30);
-        }
-
-        // تقطيع الفاكهة
-        function cutFruit(e) {
-            if (!gameActive || isPaused) return;
-            
-            const fruit = e.target;
-            const points = parseInt(fruit.dataset.points);
-            
-            // زيادة النقاط والفواكه المقطوعة
-            score += points;
-            fruitsCut++;
-            
-            // تحديث واجهة المستخدم
-            updateUI();
-            
-            // تأثير التقطيع
-            fruit.style.transform = 'scale(1.5)';
-            fruit.style.opacity = '0.5';
-            
-            // إزالة الفاكهة بعد التأثير
-            setTimeout(() => {
-                fruit.remove();
-            }, 200);
-            
-            // التحقق من إنجاز المستوى
-            if (level <= levelGoals.length && score >= levelGoals[level - 1]) {
-                endLevel(true);
+        // العناصر
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const preview = document.getElementById('preview');
+        const startCameraBtn = document.getElementById('start-camera');
+        const captureBtn = document.getElementById('capture-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const emailForm = document.getElementById('email-form');
+        const emailInput = document.getElementById('email');
+        const sendBtn = document.getElementById('send-btn');
+        const statusDiv = document.getElementById('status');
+        
+        let stream = null;
+        let capturedImage = null;
+        
+        // استبدل هذا الرابط برابط نشر Google Apps Script الخاص بك
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+        
+        // تشغيل الكاميرا
+        startCameraBtn.addEventListener('click', async () => {
+            try {
+                statusDiv.textContent = "جاري تشغيل الكاميرا...";
+                statusDiv.className = "loading";
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }, 
+                    audio: false 
+                });
+                
+                video.srcObject = stream;
+                captureBtn.disabled = false;
+                statusDiv.textContent = "الكاميرا جاهزة للاستخدام";
+                statusDiv.className = "success";
+                
+                // إخفاء معاينة الصورة إذا كانت ظاهرة
+                preview.style.display = 'none';
+                video.style.display = 'block';
+                
+            } catch (err) {
+                console.error("خطأ في الوصول للكاميرا:", err);
+                statusDiv.textContent = "خطأ في الوصول للكاميرا. تأكد من السماح بالوصول للكاميرا.";
+                statusDiv.className = "error";
             }
-        }
-
-        // تحديث واجهة المستخدم
-        function updateUI() {
-            scoreElement.textContent = score;
-            levelElement.textContent = level;
-            fruitsCutElement.textContent = fruitsCut;
-        }
-
-        // إنهاء المستوى
-        function endLevel(levelCompleted = false) {
-            gameActive = false;
-            clearInterval(timerInterval);
-            clearInterval(fruitInterval);
+        });
+        
+        // التقاط الصورة
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // إزالة جميع الفواكه المتبقية
-            document.querySelectorAll('.fruit').forEach(fruit => fruit.remove());
+            // تحويل الصورة إلى بيانات
+            capturedImage = canvas.toDataURL('image/png');
             
-            if (levelCompleted && level < levelGoals.length) {
-                // الانتقال للمستوى التالي
-                level++;
-                setTimeout(() => {
-                    showLevelScreen();
-                }, 1000);
-            } else {
-                // انتهت اللعبة
-                endGame();
+            // إظهار المعاينة
+            preview.src = capturedImage;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+            
+            // إيقاف الكاميرا
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
             }
-        }
-
-        // إنهاء اللعبة
-        function endGame() {
-            gameOverScreen.classList.remove('hidden');
-            finalScoreElement.textContent = score;
             
-            // حساب التقييم
-            calculateRating();
-        }
-
-        // حساب التقييم
-        function calculateRating() {
-            const maxScore = levelGoals[levelGoals.length - 1];
-            const ratingValue = Math.min(5, Math.ceil((score / maxScore) * 5));
+            // إظهار نموذج البريد الإلكتروني وأزرار التحكم
+            emailForm.style.display = 'block';
+            retakeBtn.style.display = 'flex';
+            captureBtn.style.display = 'none';
             
-            const stars = ratingElement.querySelectorAll('.star');
-            stars.forEach((star, index) => {
-                if (index < ratingValue) {
-                    star.classList.add('filled');
+            statusDiv.textContent = "تم التقاط الصورة بنجاح! أدخل بريدك الإلكتروني للإرسال.";
+            statusDiv.className = "success";
+        });
+        
+        // إعادة التقاط الصورة
+        retakeBtn.addEventListener('click', () => {
+            // إعادة تعيين العناصر
+            preview.style.display = 'none';
+            video.style.display = 'block';
+            emailForm.style.display = 'none';
+            retakeBtn.style.display = 'none';
+            captureBtn.style.display = 'flex';
+            emailInput.value = "";
+            capturedImage = null;
+            
+            // إعادة تشغيل الكاميرا
+            startCameraBtn.click();
+        });
+        
+        // إرسال البريد الإلكتروني
+        sendBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            
+            if (!validateEmail(email)) {
+                statusDiv.textContent = "يرجى إدخال بريد إلكتروني صحيح";
+                statusDiv.className = "error";
+                return;
+            }
+            
+            if (!capturedImage) {
+                statusDiv.textContent = "لم يتم التقاط أي صورة";
+                statusDiv.className = "error";
+                return;
+            }
+            
+            statusDiv.textContent = "جاري إرسال الصورة...";
+            statusDiv.className = "loading";
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        image: capturedImage
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.textContent = "تم إرسال الصورة بنجاح إلى " + email;
+                    statusDiv.className = "success";
+                    
+                    // إعادة تعيين النموذج
+                    setTimeout(() => {
+                        emailInput.value = "";
+                        emailForm.style.display = "none";
+                        retakeBtn.style.display = "none";
+                        captureBtn.style.display = "flex";
+                        capturedImage = null;
+                        preview.style.display = 'none';
+                        video.style.display = 'block';
+                    }, 3000);
+                    
                 } else {
-                    star.classList.remove('filled');
+                    throw new Error(result.message);
                 }
-            });
+                
+            } catch (error) {
+                console.error("خطأ في الإرسال:", error);
+                statusDiv.textContent = "حدث خطأ أثناء إرسال الصورة. حاول مرة أخرى.";
+                statusDiv.className = "error";
+            }
+        });
+        
+        // التحقق من صحة البريد الإلكتروني
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
-
-        // إيقاف/استئناف اللعبة
-        function togglePause() {
-            if (!gameActive) return;
-            
-            isPaused = !isPaused;
-            pauseButton.textContent = isPaused ? 'استئناف' : 'إيقاف مؤقت';
-        }
-
-        // إعادة تشغيل اللعبة
-        function restartGame() {
-            clearInterval(timerInterval);
-            clearInterval(fruitInterval);
-            document.querySelectorAll('.fruit').forEach(fruit => fruit.remove());
-            initGame();
-        }
-
-        // إضافة الأحداث
-        startLevelButton.addEventListener('click', startLevel);
-        restartButton.addEventListener('click', restartGame);
-        pauseButton.addEventListener('click', togglePause);
-        restartGameButton.addEventListener('click', restartGame);
-
-        // بدء اللعبة عند تحميل الصفحة
-        window.onload = initGame;
     </script>
 </body>
 </html>
