@@ -1,210 +1,107 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>دردشة خاصة — نمط واتساب</title>
-
-  <!-- Firebase SDK (compat for simple HTML) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-  <style>
-    :root{
-      --wh-green:#075E54;
-      --bubble-me:#dcf8c6;
-      --bubble-them:#ffffff;
-      --bg:#e5ddd5;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      font-family:Tahoma, Arial, sans-serif;
-      direction:rtl;
-      background:var(--bg);
-    }
-    header{
-      background:var(--wh-green);
-      color:#fff;
-      padding:12px 16px;
-      text-align:center;
-      font-size:18px;
-    }
-    #container{flex:1; display:flex; flex-direction:column;}
-    #login{
-      padding:18px;
-      text-align:center;
-    }
-    #login input{padding:8px; font-size:14px; margin:6px; border-radius:6px; border:1px solid #ccc}
-    #login button{
-      background:#25D366; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-size:14px;
-    }
-    #chat{display:none; flex:1; border-top:1px solid rgba(0,0,0,0.06); display:flex; flex-direction:column;}
-    #messages{
-      flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px;
-      background: linear-gradient(#ece5dd, #e5ddd5);
-    }
-    .bubble{
-      max-width:72%;
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:14px;
-      word-break:break-word;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
-      display:inline-block;
-    }
-    .theirs{align-self:flex-start; background:var(--bubble-them); border-bottom-left-radius:0;}
-    .mine{align-self:flex-end; background:var(--bubble-me); border-bottom-right-radius:0;}
-    .meta{font-size:11px; color:#666; margin-top:4px; opacity:0.9;}
-    #inputBar{
-      display:flex; gap:8px; padding:10px; align-items:center; background:#f0f0f0; border-top:1px solid #ddd;
-    }
-    #text{flex:1; padding:10px 12px; border-radius:20px; border:1px solid #ccc; font-size:14px; outline:none}
-    #send{background:var(--wh-green); color:white; border:none; padding:10px 14px; border-radius:50%; font-size:16px; cursor:pointer}
-    .small{font-size:12px;color:#444; margin-bottom:8px}
-    /* scrollbar small */
-    #messages::-webkit-scrollbar{width:8px}
-    #messages::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:8px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>التقاط صورة وإرسالها عبر GAS</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,Arial;display:flex;flex-direction:column;gap:10px;align-items:center;padding:18px}
+  video, canvas{border-radius:8px;max-width:100%;width:480px;background:#000}
+  button{padding:8px 12px;border-radius:8px;cursor:pointer}
+  #status{font-size:14px;color:#222}
+</style>
 </head>
 <body>
-  <header>دردشة خاصة — نسق واتساب</header>
+  <h3>التقاط صورة وإرسالها إلى الإيميل</h3>
 
-  <div id="container">
-    <div id="login">
-      <div class="small">ادخل رمز الغرفة واسمك. الرسائل التي سترسلها لن تظهر لك محليًا.</div>
-      <input id="room" placeholder="رمز الغرفة (مثلاً ROOM1)">
-      <input id="user" placeholder="اسمك (مثلاً خالد)">
-      <br>
-      <button id="join">انضم للغرفة</button>
-    </div>
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" style="display:none"></canvas>
 
-    <div id="chat">
-      <div id="messages"></div>
-
-      <div id="inputBar">
-        <input id="text" placeholder="اكتب رسالة واضغط Enter أو زر الإرسال">
-        <button id="send">➤</button>
-      </div>
-    </div>
+  <div>
+    <button id="start">فتح الكاميرا والتقاط صورة</button>
+    <button id="stop" disabled>إيقاف الكاميرا</button>
   </div>
 
-  <script>
-    // ----- Firebase config (الصق إعداداتك هنا) -----
-    const firebaseConfig = {
-      apiKey: "AIzaSyDfOgEN5JrSVBhtQn0uNPaNA6mGy9ElNl0",
-      authDomain: "privatechatapp-64cdc.firebaseapp.com",
-      databaseURL: "https://privatechatapp-64cdc-default-rtdb.firebaseio.com",
-      projectId: "privatechatapp-64cdc",
-      storageBucket: "privatechatapp-64cdc.firebasestorage.app",
-      messagingSenderId: "1043290226215",
-      appId: "1:1043290226215:web:78b49072dd70e748eb1802",
-      measurementId: "G-G0Q28H45ZX"
-    };
-    // ----------------------------------------------
+  <p id="status">جاهز</p>
 
-    // init
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+<script>
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYBXwQTyonHkaPOomhQB2RF6X2uk37_YiZEtl6B5JWCIarDYXd1mc-9cqFjJdR8Cg/exec"; // ضع هنا رابط Web App المنشور من GAS
 
-    // DOM
-    const loginDiv = document.getElementById('login');
-    const chatDiv = document.getElementById('chat');
-    const messagesDiv = document.getElementById('messages');
-    const roomInput = document.getElementById('room');
-    const userInput = document.getElementById('user');
-    const joinBtn = document.getElementById('join');
-    const textInput = document.getElementById('text');
-    const sendBtn = document.getElementById('send');
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const startBtn = document.getElementById('start');
+const stopBtn = document.getElementById('stop');
+const status = document.getElementById('status');
+let stream = null;
 
-    // create or reuse a client id so we can identify this client
-    let myClientId = localStorage.getItem('chat_client_id');
-    if(!myClientId){
-      myClientId = Math.random().toString(36).slice(2,10);
-      localStorage.setItem('chat_client_id', myClientId);
-    }
+async function startCamera() {
+  status.textContent = 'طلب صلاحية الكاميرا...';
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    video.srcObject = stream;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    status.textContent = 'الكاميرا تعمل. سيتم التقاط صورة بعد 700 ملليثانية...';
+    await new Promise(r => setTimeout(r, 700));
+    await captureAndSend();
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'خطأ: لم تُمنح صلاحية الكاميرا أو الجهاز لا يدعمها.';
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  }
+}
 
-    let roomRef = null;
-    let username = 'مجهول';
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    video.srcObject = null;
+    status.textContent = 'تم إيقاف الكاميرا';
+  }
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+}
 
-    // helper: format time HH:MM
-    function fmtTime(ts){
-      try{
-        const d = new Date(ts);
-        const hh = String(d.getHours()).padStart(2,'0');
-        const mm = String(d.getMinutes()).padStart(2,'0');
-        return hh + ':' + mm;
-      }catch(e){ return '';}
-    }
+async function captureAndSend() {
+  if (!stream) { status.textContent = 'الكاميرا غير متاحة'; return; }
 
-    // display a message (for others only; sender's own messages are not shown locally)
-    function showMessage(msg){
-      const el = document.createElement('div');
-      const whoIsMe = msg.senderId === myClientId;
-      // We intentionally do NOT show messages sent by this client (per requirement).
-      if(whoIsMe) return;
-      el.className = 'bubble theirs';
-      const content = document.createElement('div');
-      content.textContent = msg.user + ': ' + msg.text;
-      el.appendChild(content);
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      meta.textContent = fmtTime(msg.ts || Date.now());
-      el.appendChild(meta);
-      messagesDiv.appendChild(el);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+  canvas.width = video.videoWidth || 1280;
+  canvas.height = video.videoHeight || 720;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // join room
-    joinBtn.onclick = () => {
-      const room = roomInput.value.trim();
-      username = (userInput.value.trim() || 'مجهول');
-      if(!room) return alert('أدخل رمز الغرفة أولاً');
-      // set reference
-      roomRef = db.ref('rooms/' + room + '/messages');
-      // UI
-      loginDiv.style.display = 'none';
-      chatDiv.style.display = 'flex';
-      messagesDiv.innerHTML = '';
-      // listen for new messages
-      roomRef.limitToLast(200).on('child_added', snap => {
-        const m = snap.val();
-        // m has: text, user, ts, senderId
-        showMessage(m);
-      });
-    };
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-    // send message
-    function sendMessage(){
-      const txt = textInput.value.trim();
-      if(!txt || !roomRef) return;
-      const payload = {
-        text: txt,
-        user: username,
-        ts: Date.now(),
-        senderId: myClientId
-      };
-      // push to firebase
-      roomRef.push(payload).then(()=>{
-        // do not display it locally (deliberate)
-        textInput.value = '';
-        // optional: you can flash a tiny confirmation; we skip to meet requirement
-      }).catch(err=>{
-        console.error('send error',err);
-        alert('فشل إرسال الرسالة');
-      });
-    }
+  status.textContent = 'جارٍ إرسال الصورة...';
 
-    sendBtn.onclick = sendMessage;
-    textInput.addEventListener('keypress', e => {
-      if(e.key === 'Enter') sendMessage();
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: 'capture_' + Date.now() + '.jpg',
+        image: dataUrl
+      })
     });
 
-    // quick note: if you want to see also your own sent messages for debugging,
-    // open the Firebase Realtime Database console and inspect /rooms/{room}/messages
-  </script>
+    const json = await res.json().catch(()=>({}));
+    if (res.ok) {
+      status.textContent = 'تم الإرسال. الخادم رد: ' + (json.status || 'ok');
+    } else {
+      status.textContent = 'فشل الإرسال: ' + (json.error || res.statusText);
+    }
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'خطأ في الاتصال بخادم GAS.';
+  } finally {
+    // إيقاف الكاميرا تلقائياً بعد الإرسال
+    stopCamera();
+  }
+}
+
+startBtn.addEventListener('click', startCamera);
+stopBtn.addEventListener('click', stopCamera);
+</script>
 </body>
 </html>
