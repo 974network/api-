@@ -1,153 +1,145 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>تسجيل دخول - بموافقتك نلتقط صورة</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>تسجيل وموافقة - التقاط صورة</title>
 <style>
-  :root{--bg:#0b1220;--card:#0f1724;--accent:#16a34a;--muted:#94a3b8}
-  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#061029,#071a2a);color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh}
-  .card{width:380px;background:rgba(255,255,255,0.03);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+  body{font-family:Inter,system-ui,Arial;background:#071a2a;color:#e6eef8;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+  .card{width:420px;background:rgba(255,255,255,0.02);padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
   h2{margin:0 0 8px;font-size:18px}
-  label{display:block;margin:10px 0;font-size:13px;color:var(--muted)}
-  input[type="text"], input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+  label{display:block;margin-top:10px;font-size:13px;color:#94a3b8}
+  input,button{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
   .row{display:flex;gap:8px;margin-top:12px}
-  button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-ghost{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
-  .consent{font-size:12px;color:#ffd6a5;background:rgba(255,210,140,0.03);padding:8px;border-radius:6px;margin-top:12px}
-  .status{margin-top:10px;font-size:13px;color:var(--muted)}
-  .preview{width:100%;height:160px;background:#000;border-radius:8px;margin-top:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .preview img{max-width:100%;max-height:100%;display:block}
-  small{color:var(--muted)}
+  .row button{flex:1}
+  .muted{color:#94a3b8;font-size:13px;margin-top:8px}
+  .preview{margin-top:12px;height:160px;background:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .preview img{max-width:100%;max-height:100%}
 </style>
 </head>
 <body>
-  <div class="card" role="main" aria-labelledby="title">
-    <h2 id="title">تسجيل الدخول</h2>
+  <div class="card">
+    <h2>تسجيل وموافقة</h2>
 
     <label>اسم المستخدم
       <input id="username" type="text" placeholder="مثال: ahmed">
     </label>
 
     <label>كلمة المرور
-      <input id="password" type="password" placeholder="●●●●●●">
+      <input id="password" type="password" placeholder="●●●●">
     </label>
 
-    <div class="consent">
-      <input id="consentChk" type="checkbox"> أوافق صراحة على أن يتم التقاط صورة لي الآن وإرسالها إلى البريد المُدرَج أدناه لغرض التوثيق.
-      <div><small>البريد المستلم: <span id="toEmailDisplay">your.email@example.com</span></small></div>
+    <label style="margin-top:10px">
+      <input id="consent" type="checkbox"> أوافق صراحة على التقاط صورة الآن وإرسالها لغرض التوثيق.
+    </label>
+
+    <div class="row" style="margin-top:12px">
+      <button id="submitBtn">تسجيل وموافقة</button>
+      <button id="clearBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">مسح</button>
     </div>
 
-    <div class="row">
-      <button id="loginBtn" class="btn-primary">تسجيل دخول وموافقة</button>
-      <button id="clearBtn" class="btn-ghost">مسح</button>
-    </div>
+    <div id="status" class="muted">الحالة: جاهز</div>
 
-    <div class="status" id="status">لم يتم التقاط صورة بعد.</div>
+    <div class="preview" id="preview"><small class="muted">معاينة الصورة ستظهر هنا</small></div>
 
-    <div class="preview" id="preview"><small>معاينة الصورة ستظهر هنا بعد الموافقة</small></div>
+    <div class="muted" style="margin-top:8px;font-size:12px">ملاحظة: الصفحة تطلب إذن الكاميرا فقط بعد تفعيل الموافقة. يرسل البريد إلى العنوان الذي وضعتَه في سكربت GAS.</div>
   </div>
 
 <script>
-/* ===== إعدادات - ضع رابط Web App المنشور من Google Apps Script هنا ===== */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzln1D9UWS9fGqDpg7gaJpIkhzup4bnUBxBmlwXarWUCUs6Y3ZxbQjeUlqmHZmnNsBD/exec"; // ضع exec URL هنا
-const TO_EMAIL = "963mohanadneef@gmail.com";
-document.getElementById('toEmailDisplay').textContent = TO_EMAIL;
-/* ================================================================== */
+/* ضع هنا رابط Web App (exec URL) الذي حصلت عليه بعد النشر */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwcERPf69BRumzcd-XvuUYLnDpZ4rFp023nmXzkx9RUVha3kHlLl43V2bDyH4ZvsTji/exec";
 
-const loginBtn = document.getElementById('loginBtn');
+const submitBtn = document.getElementById('submitBtn');
 const clearBtn = document.getElementById('clearBtn');
-const consentChk = document.getElementById('consentChk');
+const consent = document.getElementById('consent');
 const statusEl = document.getElementById('status');
 const preview = document.getElementById('preview');
-let stream = null;
 
-function setStatus(t){ statusEl.textContent = t; }
+function setStatus(t){ statusEl.textContent = 'الحالة: ' + t; }
 
 async function captureAndSend() {
   setStatus('طلب صلاحية الكاميرا...');
+  let stream;
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
   } catch (err) {
     console.error(err);
-    setStatus('خطأ: لم تُعط صلاحية الكاميرا أو المتصفح لا يدعمها.');
+    setStatus('لم تُمنح صلاحية الكاميرا أو الجهاز لا يدعمها.');
     return;
   }
 
-  // إنشاء canvas ورسم إطار واحد
+  // مؤقت فيديو غير مرئي
   const video = document.createElement('video');
   video.autoplay = true;
   video.playsInline = true;
   video.srcObject = stream;
 
-  // انتظر حتى يجهز الفيديو
   await new Promise(resolve => {
-    video.onloadedmetadata = () => {
-      // تأخير بسيط للثبات
-      setTimeout(resolve, 400);
-    };
+    video.onloadedmetadata = () => setTimeout(resolve, 300);
   });
 
+  // رسم على canvas
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth || 1280;
   canvas.height = video.videoHeight || 720;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  // إظهار المعاينة
+  // إيقاف الكاميرا فوراً
+  stream.getTracks().forEach(t => t.stop());
+
   const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+  // عرض المعاينة
   preview.innerHTML = '';
   const img = document.createElement('img');
   img.src = dataUrl;
   preview.appendChild(img);
 
-  // إيقاف الكاميرا
-  stream.getTracks().forEach(t => t.stop());
-  stream = null;
-
   setStatus('جارٍ إرسال الصورة...');
 
-  // إرسال إلى GAS
+  // إرسال كـ FormData (لا توجد رؤوس مخصصة -> يتجنّب preflight)
+  const form = new FormData();
+  form.append('filename', 'capture_' + Date.now() + '.jpg');
+  form.append('image', dataUrl);
+  form.append('username', document.getElementById('username').value || '');
+  form.append('note', 'User consent provided');
+
   try {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ filename: 'consent_capture_' + Date.now() + '.jpg', image: dataUrl, username: document.getElementById('username').value })
+      body: form
     });
     const json = await res.json().catch(()=>({}));
     if (res.ok) {
-      setStatus('تم التقاط الصورة وإرسالها إلى البريد.');
+      setStatus('تم الإرسال بنجاح.');
     } else {
       setStatus('فشل الإرسال: ' + (json.error || res.statusText));
     }
   } catch (err) {
     console.error(err);
-    setStatus('خطأ في الاتصال بخادم GAS.');
+    setStatus('خطأ في الاتصال بالخادم.');
   }
 }
 
-loginBtn.addEventListener('click', async () => {
-  if (!consentChk.checked) {
-    setStatus('يجب الموافقة صراحة قبل التقاط الصورة.');
-    return;
-  }
-  setStatus('الموافقة مسجلة. البدء...');
+submitBtn.addEventListener('click', async () => {
+  if (!consent.checked) { setStatus('يجب الموافقة صراحةً أولاً.'); return; }
+  setStatus('تمت الموافقة. جاري العملية...');
   await captureAndSend();
 });
 
-clearBtn.addEventListener('click', () => {
+clearBtn.addEventListener('click', ()=> {
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
-  consentChk.checked = false;
-  preview.innerHTML = '<small>معاينة الصورة ستظهر هنا بعد الموافقة</small>';
-  setStatus('تم المسح.');
+  consent.checked = false;
+  preview.innerHTML = '<small class="muted">معاينة الصورة ستظهر هنا</small>';
+  setStatus('تم المسح');
 });
 
-/* فحص دعم الكاميرا */
+/* دعم الكاميرا */
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
   setStatus('المتصفح لا يدعم كاميرا الويب عبر getUserMedia.');
-  loginBtn.disabled = true;
+  submitBtn.disabled = true;
 }
 </script>
 </body>
