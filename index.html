@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>دردشة خاصة</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    body {
+      font-family: "Tahoma", sans-serif;
+      background: #e5ddd5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      direction: rtl;
+    }
+    header {
+      background: #075E54;
+      color: white;
+      padding: 14px;
+      font-size: 18px;
+      text-align: center;
+    }
+    #login {
+      margin: auto;
+      text-align: center;
+    }
+    #login input {
+      padding: 8px;
+      font-size: 16px;
+      width: 180px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #login button {
+      background: #25D366;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #chat {
+      display: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      background: #ece5dd;
+    }
+    .msg {
+      max-width: 70%;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 10px;
+      clear: both;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+    .mine {
+      background: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+    .theirs {
+      background: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+    #inputBar {
+      display: flex;
+      padding: 8px;
+      background: #f0f0f0;
+      border-top: 1px solid #ccc;
+    }
+    #inputBar input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 25px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 14px;
+    }
+    #inputBar button {
+      background: #25D366;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      margin-right: 8px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>💬 دردشة مشفّرة</header>
+
+  <div id="login">
+    <p>ادخل رمز الغرفة للانضمام:</p>
+    <input id="room" placeholder="مثلاً ABC123">
+    <br><br>
+    <input id="user" placeholder="اسمك" style="width:180px;">
+    <br><br>
+    <button id="join">دخول</button>
+  </div>
+
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="inputBar">
+      <input id="text" placeholder="اكتب رسالة..." autocomplete="off">
+      <button id="send">➤</button>
+    </div>
+  </div>
+
+  <script>
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfOgEN5JrSVBhtQn0uNPaNA6mGy9ElNl0",
+      authDomain: "privatechatapp-64cdc.firebaseapp.com",
+      databaseURL: "https://privatechatapp-64cdc-default-rtdb.firebaseio.com",
+      projectId: "privatechatapp-64cdc",
+      storageBucket: "privatechatapp-64cdc.firebasestorage.app",
+      messagingSenderId: "1043290226215",
+      appId: "1:1043290226215:web:78b49072dd70e748eb1802",
+      measurementId: "G-G0Q28H45ZX"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // عناصر DOM
+    const loginDiv = document.getElementById('login');
+    const chatDiv = document.getElementById('chat');
+    const roomInput = document.getElementById('room');
+    const userInput = document.getElementById('user');
+    const joinBtn = document.getElementById('join');
+    const messagesDiv = document.getElementById('messages');
+    const textInput = document.getElementById('text');
+    const sendBtn = document.getElementById('send');
+
+    let roomRef = null;
+    let username = "مجهول";
+
+    joinBtn.onclick = () => {
+      const room = roomInput.value.trim();
+      username = userInput.value.trim() || "مجهول";
+      if (!room) return alert("أدخل رمز الغرفة");
+      roomRef = db.ref("rooms/" + room + "/messages");
+      loginDiv.style.display = "none";
+      chatDiv.style.display = "flex";
+      messagesDiv.innerHTML = "";
+
+      // الاستماع للرسائل الجديدة
+      roomRef.limitToLast(100).on("child_added", snap => {
+        const m = snap.val();
+        const msgEl = document.createElement("div");
+        msgEl.className = "msg " + (m.user === username ? "mine" : "theirs");
+        msgEl.textContent = m.user + ": " + m.text;
+        messagesDiv.appendChild(msgEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      });
+    };
+
+    sendBtn.onclick = () => {
+      const text = textInput.value.trim();
+      if (!text || !roomRef) return;
+      roomRef.push({ text: text, user: username, ts: Date.now() });
+      textInput.value = "";
+    };
+
+    textInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendBtn.click();
+    });
+  </script>
+
+</body>
+</html>
