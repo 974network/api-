@@ -777,6 +777,35 @@
         body.show-login .login-container {
             display: block !important;
         }
+        /* إضافة هذا الكود في قسم الستايل */
+
+.charge-icon {
+    width: 80px !important;        /* مقاس موحد للعرض */
+    height: 80px !important;       /* مقاس موحد للارتفاع */
+    object-fit: contain !important; /* للحفاظ على التناسب دون تشويه */
+    margin: 0 auto 10px auto !important; /* توسيط الصورة */
+    display: block !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    padding: 8px !important;
+}
+
+/* للجوال - مقاس أصغر */
+@media (max-width: 768px) {
+    .charge-icon {
+        width: 60px !important;
+        height: 60px !important;
+        padding: 6px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .charge-icon {
+        width: 50px !important;
+        height: 50px !important;
+        padding: 5px !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1478,6 +1507,7 @@
     </script>
 </body>
 </html>
+
 
 
 
