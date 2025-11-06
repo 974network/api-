@@ -549,6 +549,24 @@
                 flex-direction: column;
             }
         }
+        .logo {
+  width: 80px;          /* حجم الدائرة */
+  height: auto;          /* يتناسب تلقائياً */
+  margin: 0 auto 12px;   /* توسيط الشعار */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: none;      /* إزالة الظل */
+  background: none;      /* إزالة الخلفية البيضاء */
+}
+
+.logo img {
+  width: 60px;           /* حجم الشعار */
+  height: auto;          /* يحافظ على النسبة */
+  border-radius: 0;      /* لا حاجة لدائرة */
+  object-fit: contain;   /* يحافظ على شكل الصورة */
+}
+
     </style>
 </head>
 <body>
@@ -1120,6 +1138,7 @@
     </script>
 </body>
 </html>
+
 
 
 
