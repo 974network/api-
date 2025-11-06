@@ -675,6 +675,49 @@
                 flex-direction: column;
             }
         }
+        .selected-charge-info {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    border: 3px solid #ffd700;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.selected-charge-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #ff6b6b, #3498db, #ffd700);
+}
+
+.selected-charge-info h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.selected-charge-info p {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 10px;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 0;
+}
     </style>
 </head>
 <body>
@@ -1265,6 +1308,7 @@
     </script>
 </body>
 </html>
+
 
 
 
