@@ -93,7 +93,7 @@
         }
 
         .header h1 {
-            color: #ffffff;
+            color: #000000;
             font-size: 32px;
             margin-bottom: 12px;
             font-weight: 700;
@@ -908,9 +908,26 @@
         
         // زر إلغاء الشروط
         cancelBtn.addEventListener('click', function() {
-            termsModal.style.display = 'none';
-            showStatus('يجب الموافقة على الشروط والأحكام لاستخدام النظام', 'error');
-        });
+    termsModal.style.display = 'none';
+    
+    // عرض رسالة حمراء مباشرة بدون استخدام showStatus
+    statusDiv.innerHTML = `
+        <div style="
+            background: #ffcccc; 
+            color: #cc0000; 
+            border: 2px solid #ff0000; 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center; 
+            font-weight: bold; 
+            margin: 20px 0;
+            font-size: 16px;
+        ">
+            ⚠️ يجب الموافقة على الشروط والأحكام لاستخدام النظام
+        </div>
+    `;
+    statusDiv.style.display = 'block';
+});
         
         // إظهار الشروط عند النقر على الرابط
         showTermsLink.addEventListener('click', function(e) {
@@ -1248,6 +1265,7 @@
     </script>
 </body>
 </html>
+
 
 
 
