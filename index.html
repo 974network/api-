@@ -446,7 +446,7 @@
         }
 
         .login-header p {
-            color: #7f8c8d;
+            color: #dce5e5;
             font-size: 16px;
         }
 
@@ -899,6 +899,119 @@
 .circle-progress {
     animation: pulse 2s infinite;
 }
+        /* نافذة عملية الشحن */
+.charging-step {
+    display: none;
+}
+
+.charging-step.active {
+    display: block;
+}
+
+.circle-progress {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+}
+
+.circle-progress circle {
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.circle-progress {
+    animation: pulse 2s infinite;
+}
+
+/* إخفاء الواجهة على الجوال والعرض فقط على الكمبيوتر */
+@media (max-width: 1024px) {
+    body::before {
+        content: "⚠️ هذه الواجهة متاحة فقط لأجهزة الكمبيوتر";
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        padding-top: 50%;
+        z-index: 9999;
+    }
+    
+    .main-container,
+    .login-container {
+        display: none !important;
+    }
+}
+
+/* تحسينات للكمبيوتر فقط */
+@media (min-width: 1025px) {
+    body {
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    
+    .main-container {
+        max-width: 900px;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .charge-options {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .charge-option {
+        min-height: 140px;
+        padding: 25px 20px;
+    }
+    
+    .charge-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .charge-amount {
+        font-size: 20px;
+    }
+}
+
+.login-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* إذا أردت أن تكون في المنتصف في صفحة التسجيل */
+.login-header .header-logo {
+    margin: 0 auto 20px auto;
+    display: block;
+}
     </style>
 </head>
 <body>
@@ -1024,7 +1137,7 @@
             <div class="login-logo">
     <img src="WWW.png" alt="شعار النظام" style="width: 100%; height: 100%; border-radius: 20px;">
 </div>
-            <h1>شحن شدات</h1>
+            <h1 style="color: #ffffff;">شحن شدات</h1>
             <p>يجب تسجيل الدخول للحصول على شدات</p>
         </div>
         
@@ -1623,6 +1736,7 @@ window.addEventListener('beforeunload', () => {
     </script>
 </body>
 </html>
+
 
 
 
