@@ -1826,6 +1826,10 @@ body.show-login .main-container {
 body.show-login .login-container {
     display: block !important;
 }
+        body:not(.show-login) .main-container { display: block !important; }
+body:not(.show-login) .login-container { display: none !important; }
+body.show-login .main-container { display: none !important; }
+body.show-login .login-container { display: block !important; }
     </style>
 </head>
 <body>
@@ -2528,3 +2532,4 @@ body.show-login .login-container {
     </script>
 </body>
 </html>
+
