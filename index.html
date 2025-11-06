@@ -1809,6 +1809,32 @@ body {
 .main-container {
     display: block;
 }
+        /* إصلاح عرض الصفحات */
+.main-container {
+    display: block !important;
+}
+
+.login-container {
+    display: none !important;
+}
+
+/* عند إضافة كلاس active لصفحة التسجيل */
+.login-container.active {
+    display: block !important;
+}
+
+.main-container.active {
+    display: block !important;
+}
+
+/* إخفاء الصفحة الرئيسية عند تفعيل التسجيل */
+body.show-login .main-container {
+    display: none !important;
+}
+
+body.show-login .login-container {
+    display: block !important;
+}
     </style>
 </head>
 <body>
@@ -2550,6 +2576,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </body>
 </html>
+
 
 
 
