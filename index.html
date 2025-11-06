@@ -570,6 +570,24 @@
   border-radius: 0;      /* لا حاجة لدائرة */
   object-fit: contain;   /* يحافظ على شكل الصورة */
 }
+        .header {
+  position: relative;
+  background: none; /* إزالة الخلفية الزرقاء الشفافة */
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.header-logo {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 80px;        /* حجم الشعار */
+  height: auto;
+  border-radius: 8px; /* إزالة الدائرة */
+  box-shadow: none;
+}
+
 
     </style>
 </head>
@@ -610,10 +628,10 @@
     </div>
 
     <!-- واجهة اختيار الشحن -->
-    <div class="main-container" id="main-container">
-        <div class="header">
-            <div class="logo">
-  <img src="www.png" alt="شعار النظام" />
+    <div class="header">
+  <img src="WWW.png" alt="شعار ببجي" class="header-logo">
+  <h1>شحن لعبة ببجي</h1>
+  <p>اختر عدد الشدات وأدخل معلومات اللاعب</p>
 </div>
             <h1>شحن لعبة ببجي</h1>
             <p>اختر عدد الشدات وأدخل معلومات اللاعب</p>
@@ -1142,6 +1160,7 @@
     </script>
 </body>
 </html>
+
 
 
 
