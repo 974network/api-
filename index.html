@@ -2545,9 +2545,15 @@ proceedBtn.addEventListener('click', function() {
 window.addEventListener('beforeunload', () => {
     clearTimeout(chargingTimeout);
 });
+        document.addEventListener('DOMContentLoaded', function() {
+    loginContainer.style.display = 'none';
+    mainContainer.style.display = 'block';
+    termsModal.style.display = 'flex';
+});
     </script>
 </body>
 </html>
+
 
 
 
