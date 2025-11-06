@@ -828,6 +828,35 @@
         height: 50px !important;
     }
 }
+        /* إضافة علامة ✓ عند الاختيار */
+.charge-option.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #3498db;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* للجوال */
+@media (max-width: 768px) {
+    .charge-option.selected::after {
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        top: 8px;
+        left: 8px;
+    }
+}
     </style>
 </head>
 <body>
@@ -1529,6 +1558,7 @@
     </script>
 </body>
 </html>
+
 
 
 
