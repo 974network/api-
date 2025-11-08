@@ -950,6 +950,220 @@
         body.show-login .login-container {
             display: block !important;
         }
+        <style>
+/* تحسينات إضافية لصفحة تسجيل الدخول للجوال */
+@media (max-width: 1024px) {
+    .login-main-container {
+        width: 90%;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .login-w-50 {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .login-logo img {
+        width: 250px;
+        margin-right: 0;
+        margin-top: 20px;
+    }
+    
+    .login-tag-line h3 {
+        margin-right: 0;
+        font-size: 22px;
+        line-height: 1.4;
+    }
+    
+    .login-form-section {
+        width: 100%;
+        margin-right: 0;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        padding: 60px 0 100px 0;
+    }
+    
+    .login-logo img {
+        width: 200px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 20px;
+        padding: 0 15px;
+    }
+    
+    .login-form-section {
+        padding: 12px 12px 0;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 12px 0 14px 12px;
+        font-size: 15px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 10px 0 11px 0;
+        font-size: 18px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 70%;
+        margin: 20px 0 20px 15%;
+        padding: 12px 6px 12px 6px;
+        font-size: 16px;
+    }
+    
+    .login-create-page p {
+        margin-right: 0;
+        font-size: 13px;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 40px 0 80px 0;
+    }
+    
+    .login-logo img {
+        width: 180px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 18px;
+    }
+    
+    .login-form-section {
+        padding: 10px 10px 0;
+        border-radius: 6px;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 10px 0 12px 10px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 9px 0 10px 0;
+        font-size: 16px;
+    }
+    
+    .login-form-section a[class="forgot"] {
+        font-size: 13px;
+        margin-top: 12px;
+    }
+    
+    .login-form-section .line {
+        margin-top: 16px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 80%;
+        margin: 16px 0 16px 10%;
+        padding: 10px 6px 10px 6px;
+        font-size: 15px;
+    }
+    
+    .login-create-page p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .login-container {
+        padding: 30px 0 60px 0;
+    }
+    
+    .login-logo img {
+        width: 160px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 16px;
+    }
+    
+    .login-form-section {
+        padding: 8px 8px 0;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 8px 0 10px 8px;
+        font-size: 13px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 8px 0 9px 0;
+        font-size: 15px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 85%;
+        margin: 14px 0 14px 7.5%;
+        font-size: 14px;
+    }
+}
+
+/* تحسينات عامة للتجربة على الجوال */
+.login-form-section input[type="text"],
+.login-form-section input[type="password"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.login-form-section input[type="submit"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* منع التكبير التلقائي على حقول الإدخال في iOS */
+@media (max-width: 768px) {
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        font-size: 16px; /* منع التكبير في iOS */
+    }
+}
+
+/* تحسينات للوضع الأفقي على الجوال */
+@media (max-height: 500px) and (orientation: landscape) {
+    .login-container {
+        padding: 20px 0 40px 0;
+    }
+    
+    .login-main-container {
+        flex-direction: row;
+    }
+    
+    .login-w-50 {
+        width: 50%;
+        margin-bottom: 0;
+    }
+    
+    .login-logo img {
+        width: 120px;
+        margin-top: 10px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 14px;
+    }
+    
+    .login-form-section {
+        max-width: 300px;
+    }
+}
+</style>
     </style>
 </head>
 <body>
@@ -1629,4 +1843,5 @@
     </script>
 </body>
 </html>
+
 
