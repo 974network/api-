@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قوائم العقارات</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: #0d0d14;
+  color: #f0f0f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(232,201,126,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(126,184,232,0.07) 0%, transparent 55%);
+}
+
+/* ── Header ── */
+.header { text-align: center; margin-bottom: 36px; }
+.header h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); font-weight: 800; margin-bottom: 6px; }
+.header h1 span { color: #e8c97e; }
+.header p { color: #555; font-size: 0.88rem; }
+
+/* ── Grid ── */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 780px;
+}
+@media(max-width:580px){ .cards { grid-template-columns: 1fr; } }
+
+/* ── Card ── */
+.card {
+  background: #13131c;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.card.p { border-top: 3px solid #e8c97e; }
+.card.r { border-top: 3px solid #7eb8e8; }
+
+/* ── Card header ── */
+.card-head { display: flex; align-items: center; gap: 11px; }
+.icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+}
+.p .icon { background: rgba(232,201,126,0.12); }
+.r .icon { background: rgba(126,184,232,0.12); }
+.card-title { font-size: 1rem; font-weight: 700; }
+.card-sub   { font-size: 0.72rem; color: #555; margin-top: 2px; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: rgba(255,255,255,0.06); }
+
+/* ── Column section ── */
+.col-section { display: flex; flex-direction: column; gap: 8px; }
+
+.col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.col-label { font-size: 0.75rem; font-weight: 600; color: #888; letter-spacing: 0.4px; }
+.toggle-all {
+  font-size: 0.72rem; color: #555; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.toggle-all:hover { color: #aaa; }
+
+/* ── Tags ── */
+.tags {
+  display: flex; flex-wrap: wrap; gap: 7px;
+  min-height: 32px;
+}
+
+.tag {
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.04);
+  font-size: 0.78rem;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.tag:hover { border-color: rgba(255,255,255,0.2); color: #bbb; }
+.p .tag.on { background: rgba(232,201,126,0.13); border-color: #e8c97e; color: #e8c97e; }
+.r .tag.on { background: rgba(126,184,232,0.13); border-color: #7eb8e8; color: #7eb8e8; }
+.tag .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0; transition: opacity 0.15s;
+}
+.tag.on .dot { opacity: 1; }
+
+/* ── Skeleton ── */
+.skel {
+  height: 28px; width: 70px; border-radius: 20px;
+  background: linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.09) 50%,rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%;
+  animation: shim 1.2s infinite;
+}
+@keyframes shim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ── Buttons ── */
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn-lang-label {
+  grid-column: 1 / -1;
+  font-size: 0.68rem; font-weight: 600; color: #444;
+  letter-spacing: 0.5px; padding-top: 2px;
+}
+.btn-lang-label:not(:first-child) { margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+
+.btn {
+  padding: 11px 8px;
+  border: none; border-radius: 10px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all 0.18s;
+}
+.p .btn-pdf { background: #e8c97e; color: #1a1200; }
+.r .btn-pdf { background: #7eb8e8; color: #001525; }
+
+.btn-png {
+  background: transparent;
+  border: 1.5px solid;
+}
+.p .btn-png { border-color: #e8c97e; color: #e8c97e; }
+.r .btn-png { border-color: #7eb8e8; color: #7eb8e8; }
+.p .btn-png:hover:not(:disabled) { background: rgba(232,201,126,0.09); }
+.r .btn-png:hover:not(:disabled) { background: rgba(126,184,232,0.09); }
+
+.btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn:active:not(:disabled) { transform: translateY(0); filter: brightness(0.95); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; filter: none !important; }
+
+.spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: rgba(0,0,0,0.65);
+  border-radius: 50%;
+  animation: rot 0.7s linear infinite;
+  display: none;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+.btn.loading .spin { display: block; }
+.btn.loading .btext { display: none; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 22px; left: 50%;
+  transform: translateX(-50%) translateY(70px);
+  background: #1c1c2a;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 11px 20px;
+  font-size: 0.84rem;
+  transition: transform 0.28s;
+  z-index: 999; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.ok  { border-color: #4ade80; color: #4ade80; }
+.toast.err { border-color: #f87171; color: #f87171; }
+
+/* ── Print area (hidden) ── */
+#print-area {
+  position: fixed; left: -9999px; top: 0;
+  background: #fff; padding: 36px 44px;
+  width: 1500px;
+  font-family: 'Tajawal', sans-serif;
+  direction: rtl;
+}
+#print-area h2 {
+  text-align: center; font-size: 22px; font-weight: 800;
+  color: #0d0d14; margin-bottom: 22px;
+  font-family: 'Tajawal', sans-serif;
+}
+#print-area table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: 'Tajawal', sans-serif; }
+#print-area th {
+  background: #1a1a2e; color: #fff;
+  padding: 11px 14px; text-align: center;
+  font-weight: 700; font-family: 'Tajawal', sans-serif;
+}
+#print-area td {
+  padding: 10px 14px; text-align: center;
+  border-bottom: 1px solid #eee; color: #222;
+  font-family: 'Tajawal', sans-serif;
+}
+#print-area tr:nth-child(even) td { background: #f5f5f8; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>قوائم <span>العقارات</span></h1>
+  <p>اختر الأعمدة ثم حمّل PDF أو صورة محدّثة من الشيت</p>
+</div>
+
+<div class="cards">
+
+  <!-- المعروض -->
+  <div class="card p">
+    <div class="card-head">
+      <div class="icon">🏠</div>
+      <div>
+        <div class="card-title">المعروض</div>
+        <div class="card-sub">Properties</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="col-section">
+      <div class="col-header">
+        <span class="col-label">الأعمدة</span>
+        <span class="toggle-all" onclick="toggleAll('p')">تحديد الكل / إلغاء</span>
+      </div>
+      <div class="tags" id="tags-p">
+        <div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-row">
+      <div class="btn-lang-label">🇸🇦 عربي</div>
+      <button class="btn btn-pdf" id="btn-p-pdf-ar" onclick="dl('p','pdf','ar')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PDF</span>
+      </button>
+      <button class="btn btn-png" id="btn-p-png-ar" onclick="dl('p','png','ar')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PNG</span>
+      </button>
+      <div class="btn-lang-label">🇬🇧 English</div>
+      <button class="btn btn-pdf" id="btn-p-pdf-en" onclick="dl('p','pdf','en')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PDF</span>
+      </button>
+      <button class="btn btn-png" id="btn-p-png-en" onclick="dl('p','png','en')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PNG</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- المطلوب -->
+  <div class="card r">
+    <div class="card-head">
+      <div class="icon">📋</div>
+      <div>
+        <div class="card-title">المطلوب</div>
+        <div class="card-sub">Client Requests</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="col-section">
+      <div class="col-header">
+        <span class="col-label">الأعمدة</span>
+        <span class="toggle-all" onclick="toggleAll('r')">تحديد الكل / إلغاء</span>
+      </div>
+      <div class="tags" id="tags-r">
+        <div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="btn-row">
+      <div class="btn-lang-label">🇸🇦 عربي</div>
+      <button class="btn btn-pdf" id="btn-r-pdf-ar" onclick="dl('r','pdf','ar')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PDF</span>
+      </button>
+      <button class="btn btn-png" id="btn-r-png-ar" onclick="dl('r','png','ar')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PNG</span>
+      </button>
+      <div class="btn-lang-label">🇬🇧 English</div>
+      <button class="btn btn-pdf" id="btn-r-pdf-en" onclick="dl('r','pdf','en')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PDF</span>
+      </button>
+      <button class="btn btn-png" id="btn-r-png-en" onclick="dl('r','png','en')" disabled>
+        <div class="spin"></div><span class="btext">⬇ PNG</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div id="print-area">
+  <h2 id="print-title"></h2>
+  <table id="print-table"></table>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxyE25XJggaIAP1xjopsAAkDd5yhqVPOKE_rnsDJxmcLd6jYtekUS52iHwV7vTixz6_/exec";
+const TM  = { p: "properties", r: "requests" };
+
+// ── ترجمة الأعمدة — عربي ──
+const AR = {
+  "ID":               "الرقم",
+  "BUILDING/VILLA":   "المبنى / الفيلا",
+  "UNIT":             "الوحدة",
+  "TYPE":             "النوع",
+  "FURNISHED":        "مفروش",
+  "RENT":             "الإيجار (ريال)",
+  "LOCATION":         "الموقع",
+  "REMARKS":          "ملاحظات",
+};
+// ترجمة إنجليزية للأعمدة العربية فقط
+const EN = {
+  "الحالة":           "Status",
+  "المالك":           "Owner",
+  "رقم المالك":       "Owner Phone",
+  "الصور":            "Photos",
+  "اسم العميل":       "Client Name",
+  "رقم الهاتف":       "Phone",
+  "المطلوب":          "Required",
+  "المنطقة":          "Area",
+  "الميزانية":        "Budget (QAR)",
+  "جاهز للمعاينة؟":  "Ready to View?",
+  "الملاحظات":        "Notes",
+};
+const t    = col => AR[col] || col;          // عربي: يترجم الإنجليزية → عربية، الباقي كما هو
+const tEN  = col => EN[col] || col;          // إنجليزي: يترجم العربية → إنجليزية، الباقي كما هو
+
+// ── State ──
+const S = { p: { cols:[], sel: new Set() }, r: { cols:[], sel: new Set() } };
+
+// ── Toast ──
+function toast(msg, type="ok") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = "toast", 3500);
+}
+
+// ── Render tags ──
+function render(k) {
+  const box = document.getElementById(`tags-${k}`);
+  const { cols, sel } = S[k];
+  box.innerHTML = "";
+  cols.forEach(col => {
+    const el = document.createElement("div");
+    el.className = `tag ${sel.has(col) ? "on" : ""}`;
+    el.innerHTML = `<span class="dot"></span>${t(col)}`;
+    el.onclick = () => { sel.has(col) ? sel.delete(col) : sel.add(col); render(k); };
+    box.appendChild(el);
+  });
+  const has = sel.size > 0;
+  ["pdf-ar","pdf-en","png-ar","png-en"].forEach(s => {
+    const b = document.getElementById(`btn-${k}-${s}`);
+    if (b) b.disabled = !has;
+  });
+}
+
+function toggleAll(k) {
+  const { cols, sel } = S[k];
+  if (sel.size === cols.length) sel.clear();
+  else cols.forEach(c => sel.add(c));
+  render(k);
+}
+
+// ── Load columns ──
+async function loadCols(k) {
+  try {
+    const res  = await fetch(`${API}?action=getColumns&type=${TM[k]}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    // إزالة عمود FURNISHED من المعروض
+    S[k].cols = data.columns.filter(c => c && !(k === "p" && c === "FURNISHED"));
+    S[k].cols.forEach(c => S[k].sel.add(c));
+    render(k);
+  } catch(e) {
+    document.getElementById(`tags-${k}`).innerHTML =
+      `<span style="color:#f87171;font-size:0.78rem">❌ تعذر الاتصال</span>`;
+  }
+}
+
+// ── Build hidden table (عربي) ──
+function buildTable(cols, rows, useArabicHeaders = true) {
+  const tbl = document.getElementById("print-table");
+  tbl.innerHTML = "";
+
+  const thead = document.createElement("thead");
+  const hr = document.createElement("tr");
+  cols.forEach(c => {
+    const th = document.createElement("th");
+    th.textContent = useArabicHeaders ? t(c) : tEN(c);
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr);
+  tbl.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  rows.forEach(row => {
+    const tr = document.createElement("tr");
+    cols.forEach(c => {
+      const td = document.createElement("td");
+      const v = row[c];
+      td.textContent = (v !== undefined && v !== null && v !== "") ? String(v) : "—";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
+}
+
+// ── تصوير منطقة الطباعة وإرجاع Canvas ──
+async function captureArea(title, cols, rows, dir = "rtl", useArabicHeaders = true) {
+  const area = document.getElementById("print-area");
+  area.style.direction = dir;
+  document.getElementById("print-title").textContent = title;
+  buildTable(cols, rows, useArabicHeaders);
+  await document.fonts.ready;
+  return await html2canvas(area, {
+    scale: 2, useCORS: true, backgroundColor: "#ffffff", logging: false
+  });
+}
+
+// ── حفظ PNG ──
+function savePNG(canvas, fname) {
+  const a = document.createElement("a");
+  a.href = canvas.toDataURL("image/png");
+  a.download = fname;
+  a.click();
+}
+
+// ── حفظ PDF ──
+function savePDF(canvas, fname) {
+  const imgData = canvas.toDataURL("image/jpeg", 0.95);
+  const iW = canvas.width, iH = canvas.height;
+  const { jsPDF } = window.jspdf;
+  const pW = 420;
+  const pH = Math.ceil((iH / iW) * pW);
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: [Math.max(pH, 200), pW] });
+  doc.addImage(imgData, "JPEG", 0, 0, pW, pH);
+  if (pH > 297) {
+    const pages = Math.ceil(pH / 297);
+    for (let i = 1; i < pages; i++) {
+      doc.addPage();
+      doc.addImage(imgData, "JPEG", 0, -(297 * i), pW, pH);
+    }
+  }
+  doc.save(fname);
+}
+
+// ── Download (ملف واحد حسب اللغة المختارة) ──
+async function dl(k, fmt, lang) {
+  const btnId = `btn-${k}-${fmt}-${lang}`;
+  const btn = document.getElementById(btnId);
+  const sel = [...S[k].sel];
+  if (!sel.length) { toast("اختر عمود واحد على الأقل", "err"); return; }
+
+  btn.disabled = true;
+  btn.classList.add("loading");
+  const langLabel = lang === "ar" ? "عربي" : "English";
+  toast(`⏳ جاري تجهيز ${fmt.toUpperCase()} — ${langLabel}...`);
+
+  try {
+    const res  = await fetch(`${API}?action=getData&type=${TM[k]}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    const isP = k === "p";
+    let title, fname, dir, useAR;
+
+    if (lang === "ar") {
+      title  = isP ? "قائمة العقارات المعروضة" : "قائمة طلبات العملاء";
+      fname  = isP ? `معروض-عربي.${fmt}` : `مطلوب-عربي.${fmt}`;
+      dir    = "rtl"; useAR = true;
+    } else {
+      title  = isP ? "Available Properties" : "Client Requests";
+      fname  = isP ? `properties-english.${fmt}` : `requests-english.${fmt}`;
+      dir    = "ltr"; useAR = false;
+    }
+
+    const canvas = await captureArea(title, sel, data.rows, dir, useAR);
+    if (fmt === "png") savePNG(canvas, fname);
+    else savePDF(canvas, fname);
+
+    // إعادة الاتجاه للافتراضي
+    document.getElementById("print-area").style.direction = "rtl";
+
+    toast(`✅ تم تحميل ${fmt.toUpperCase()} — ${langLabel}`);
+
+  } catch(e) {
+    toast(`❌ ${e.message}`, "err");
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("loading");
+  }
+}
+
+// ── Init ──
+loadCols("p");
+loadCols("r");
+</script>
+</body>
+</html>
